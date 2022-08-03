@@ -10,11 +10,40 @@ The next significant data point to fit would be a projected rounded bottom. Usin
 
 Layers of scales are used. With a linear fit of the supercycle and a sine wave fit of the cycles. Using ln(price)+3 and ln(years)+6 scales to work with non-negative values, and inverse-sine (asin) scales for waves.
 
-1. [ln(p) vs t](plot/ln(p)%20vs%20t.png) with cycles becoming exponentially farther apart.
-2. [ln(p) vs ln(t)](plot/ln(p)%20vs%20ln(t).png) with the crunched early two cycles.
-3. [ln(ln(p)) vs ln(t)](plot/ln(ln(p))%20vs%20ln(t).png) with the supercycle being exponential, and a linear fit.
-4. [asin(ln(ln(p))) vs ln(t)](plot/asin(ln(ln(p)))%20vs%20ln(t).png) with the amplitude of the cycles being a wave.
-5. [asin(ln(ln(p))) vs asin(ln(t))](plot/asin(ln(ln(p)))%20vs%20asin(ln(t)).png) with the timing of cycles also being a wave.
-6. [ln(ln(Δp)) vs asin(ln(t))](plot/ln(ln(dp))%20vs%20asin(ln(t)).png) with a remarkable sine fit of the cycle’s double-exponential deviation from support.
+## 1. ln(p) vs t
+
+Cycles becoming exponentially farther apart.
+
+![ln(p) vs t](plot/ln(p)%20vs%20t.png)
+
+## 2. ln(p) vs ln(t)
+
+The crunched early two cycles.
+
+![ln(p) vs ln(t)](plot/ln(p)%20vs%20ln(t).png)
+
+## 3. ln(ln(p)) vs ln(t)
+
+The supercycle being exponential, and a linear fit.
+
+![ln(ln(p)) vs ln(t)](plot/ln(ln(p))%20vs%20ln(t).png)
+
+## 4. asin(ln(ln(p))) vs ln(t)
+
+The amplitude of the cycles being a wave.
+
+![asin(ln(ln(p))) vs ln(t)](plot/asin(ln(ln(p)))%20vs%20ln(t).png)
+
+## 5. asin(ln(ln(p))) vs asin(ln(t))
+
+The timing of cycles also being a wave.
+
+![asin(ln(ln(p))) vs asin(ln(t))](plot/asin(ln(ln(p)))%20vs%20asin(ln(t)).png)
+
+## 6. ln(ln(Δp)) vs asin(ln(t))
+
+A remarkable sine fit of the cycle’s double-exponential deviation from support.
+
+![ln(ln(Δp)) vs asin(ln(t))](plot/ln(ln(dp))%20vs%20asin(ln(t)).png)
 
 The formulas used can be seen here in [python](formulas.py). Using only the base and peak points plus the number of cycles as parameters.

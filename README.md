@@ -1,4 +1,4 @@
-# btc-model
+# BTC Exponential Wave Model
 
 The cycles of BTC can be modeled with exponential waves of both price and time to achieve a remarkably good fit.
 

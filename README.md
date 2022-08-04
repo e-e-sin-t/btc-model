@@ -1,4 +1,4 @@
-# btc-model
+# BTC Exponential Wave Model
 
 ![p vs d](plot/p%20vs%20d.png)
 

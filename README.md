@@ -12,6 +12,8 @@ The next significant data point to fit would be a projected rounded bottom. Usin
 
 Layers of scales are used. With a linear fit of the supercycle and a sine wave fit of the cycles. Using ln(price)+3 and ln(years)+6 scales to work with non-negative values, and inverse-sine (asin) scales for waves.
 
+[(Reddit post)](https://www.reddit.com/user/e-e-sin-t/comments/wg69qc/formal_btc_exponential_wave_model)
+
 ## 1. ln(p) vs t
 
 Cycles becoming exponentially farther apart.

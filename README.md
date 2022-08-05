@@ -12,6 +12,8 @@ The next significant data point to fit would be a projected rounded bottom. Usin
 
 Layers of scales are used. With a linear fit of the supercycle and a sine wave fit of the cycles. Using ln(price)+3 and ln(years)+6 scales to work with non-negative values, and inverse-sine (asin) scales for waves.
 
+The [formulas used](formulas.py) to generate the plots are here in python. Using only the base and peak points plus the number of cycles as parameters.
+
 ## 1. ln(p) vs t
 
 Cycles becoming exponentially farther apart.
@@ -47,5 +49,3 @@ The timing of cycles also being a wave.
 A remarkable sine fit of the cycle’s double-exponential deviation from support.
 
 ![ln(ln(Δp)) vs asin(ln(t))](plot/ln(ln(dp))%20vs%20asin(ln(t)).png)
-
-The formulas used can be seen here in [python](formulas.py). Using only the base and peak points plus the number of cycles as parameters.

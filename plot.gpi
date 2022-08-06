@@ -8,7 +8,9 @@ set key noautotitle
 
 line_color = "with lines linecolor "
 black_line = line_color."'black'"
+gray_line = line_color."'gray'"
 thin_blue_line = line_color."'blue'"
+light_blue_line = line_color."'light-blue'"
 blue_line = thin_blue_line." linewidth 2"
 
 # p vs d
@@ -153,20 +155,18 @@ set ylabel "ln(ln(Δp))"
 plot [min_x:max_x] "data.csv" using (column("asin(ln(t))")):(column("ln(ln(dp))")) @black_line, \
      "data.csv" using (column("asin(ln(t))")):(column("ln(ln(dp_m))")) @blue_line
 
-# ixic cmp Δp% vs asin(ln(t))
+# ixic Δp% vs d
 
+min_x = "2010-01-01"; max_x = "2023-01-01"
+
+set xdata time
+set format x "%Y"
 set format y "%.0f%%"
 
-set output "plot/ixic cmp dp% vs asin(ln(t)).png"
-set xlabel "t"
+set output "plot/ixic dp% vs d.png"
+set xlabel "d"
 set ylabel "Δp%"
-plot [min_x:max_x] "data.csv" using (column("asin(ln(t))")):(100*column("ln(ln(dp))%")) @black_line title "btc ln(ln(Δp))", \
-     "data.csv" using (column("asin(ln(t))")):(100*column("ixic_dp%")) @thin_blue_line title "ixic Δp"
-
-# ixic diff Δp% vs asin(ln(t))
-
-set output "plot/ixic diff dp% vs asin(ln(t)).png"
-set xlabel "t"
-set ylabel "Δp%"
-plot [min_x:max_x] "data.csv" using (column("asin(ln(t))")):(100*column("ixic_diff_dp%")) @black_line \
-                   title "btc ln(ln(Δp)) - ixic Δp"
+plot [min_x:max_x] "data.csv" using (column("d")):(100*column("ln(ln(dp))%")) @gray_line title "btc ln(ln(Δp))", \
+     "data.csv" using (column("d")):(100*column("ixic_dp%")) @light_blue_line title "ixic Δp", \
+     "data.csv" using (column("d")):(100*column("ema(ln(ln(dp))%)")) @black_line title "btc ema(ln(ln(Δp)))", \
+     "data.csv" using (column("d")):(100*column("ema(ixic_dp%)")) @thin_blue_line title "ixic ema(Δp)"

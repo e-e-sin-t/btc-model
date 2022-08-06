@@ -11,6 +11,9 @@ base_ixic_p_r = exp(log(base_ixic_p_s) + log(peak_ixic_p_r) - log(peak_ixic_p_s)
 
 end_date = base_d + timedelta(2*(peak_d - base_d).days)
 
+def ema(v,k,n=90):
+    return v[-1][k]/n + v[-2]['ema('+k+')']*(n-1)/n if len(v) > 1 else v[-1][k] if len(v) == 1 else None
+
 def write_csv(path, rows):
     cols = rows[0].keys()
 
@@ -20,7 +23,7 @@ def write_csv(path, rows):
     for row in rows:
         line = []
         for col in cols:
-            if col not in row:
+            if not row.get(col):
                 line.append("")
             elif isinstance(row[col], float):
                 line.append("%.4f" % row[col])
@@ -86,7 +89,7 @@ for d in (base_d + timedelta(n) for n in range((end_date - base_d).days)):
     # price delta percentage (dp%)
     if d in prices:
         r['ln(ln(dp))%'] = (r['ln(ln(dp))'] - ln_ln_dp(0)) / (ln_ln_dp(1 - asin_ln_ln_p(peak_supercycle_p)) - ln_ln_dp(0))
-        r['ln(ln(dp_m))%'] = (r['ln(ln(dp_m))'] - ln_ln_dp(0)) / (ln_ln_dp(1 - asin_ln_ln_p(peak_supercycle_p)) - ln_ln_dp(0))
+        r['ema(ln(ln(dp))%)'] = ema(rows, 'ln(ln(dp))%')
 
     # market price (ixic_p)
     if d in prices:
@@ -98,7 +101,9 @@ for d in (base_d + timedelta(n) for n in range((end_date - base_d).days)):
         r['ln(ixic_p_r)'] = log(r['ixic_p_r'])
         r['ixic_dp'] = r['ln(ixic_p)'] - r['ln(ixic_p_s)']
         r['ixic_dp%'] = r['ixic_dp'] / (log(base_ixic_p_r) - log(base_ixic_p_s))
+        r['ema(ixic_dp%)'] = ema(rows, 'ixic_dp%')
         r['ixic_diff_dp%'] = r['ln(ln(dp))%'] - r['ixic_dp%']
+        r['ema(ixic_diff_dp%)'] = ema(rows, 'ixic_diff_dp%', 365)
 
 write_csv("data.csv", rows)
 

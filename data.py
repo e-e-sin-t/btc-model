@@ -4,7 +4,26 @@ import csv
 from datetime import *
 from formulas import *
 
-end_date = date(2026, 1, 1)
+end_date = base_d + timedelta(2*(peak_d - base_d).days)
+
+def write_csv(path, rows):
+    cols = rows[0].keys()
+
+    f = csv.writer(open(path, "w"))
+    f.writerow(cols)
+
+    for row in rows:
+        line = []
+        for col in cols:
+            if col not in row:
+                line.append("")
+            elif isinstance(row[col], float):
+                line.append("%.4f" % row[col])
+            else:
+                line.append(str(row[col]))
+        f.writerow(line)
+
+# Load prices
 
 prices = {}
 price_csv = csv.reader(open("price.csv"))
@@ -12,16 +31,22 @@ next(price_csv)
 for line in price_csv:
     prices[datetime.strptime(line[0], "%Y-%m-%d").date()] = float(line[1])
 
-rows = []
-d = base_date
-while d < end_date:
-    r = {}
+# Data points
+
+def data_d(d):
+    r = {'d': d}
 
     # time (t)
-    r['d'] = d
-    r['t'] = year(r['d'])
+    r['t'] = time_d(r['d'])
     r['ln(t)'] = ln_t(r['t'])
     r['asin(ln(t))'] = asin_ln_t(r['t'])
+
+    # price history (p)
+    if d in prices:
+        r['p'] = prices[d]
+        r['ln(p)'] = ln_p(r['p'])
+        r['ln(ln(p))'] = ln_ln_p(r['p'])
+        r['asin(ln(ln(p)))'] = asin_p(ln_ln_p(r['p']))
 
     # supercycle support (p_s)
     r['ln(ln(p_s))'] = supercycle_ln_ln_p(r['t'])
@@ -35,42 +60,55 @@ while d < end_date:
     r['ln(p_r)'] = e_p(r['ln(ln(p_r))'])
     r['p_r'] = e_p(r['ln(p_r)'])
 
+    # price delta (dp)
+    if d in prices:
+        r['dp'] = r['asin(ln(ln(p)))'] - r['asin(ln(ln(p_s)))']
+        r['ln(dp)'] = ln_dp(r['dp'])
+        r['ln(ln(dp))'] = ln_p(r['ln(dp)'])
+
     # model (m)
     r['p_m'] = model_p(r['t'])
     r['ln(p_m)'] = ln_p(r['p_m'])
     r['ln(ln(p_m))'] = ln_p(r['ln(p_m)'])
     r['asin(ln(ln(p_m)))'] = asin_p(r['ln(ln(p_m))'])
-    r['dp_m'] = r['asin(ln(ln(p_m)))'] - r['asin(ln(ln(p_s)))']
-    r['ln(dp_m)'] = ln_dp(r['dp_m'])
-    r['ln(ln(dp_m))'] = ln_p(r['ln(dp_m)'])
-
-    # price history (p)
     if d in prices:
-        r['p'] = prices[d]
-        r['ln(p)'] = ln_p(r['p'])
-        r['ln(ln(p))'] = ln_ln_p(r['p'])
-        r['asin(ln(ln(p)))'] = asin_p(ln_ln_p(r['p']))
+        r['dp_m'] = r['asin(ln(ln(p_m)))'] - r['asin(ln(ln(p_s)))']
+        r['ln(dp_m)'] = ln_dp(r['dp_m'])
+        r['ln(ln(dp_m))'] = ln_p(r['ln(dp_m)'])
 
-        # price delta (dp)
-        r['dp'] = r['asin(ln(ln(p)))'] - r['asin(ln(ln(p_s)))']
-        r['ln(dp)'] = ln_dp(r['dp'])
-        r['ln(ln(dp))'] = ln_p(r['ln(dp)'])
+    return r
 
-    rows.append(r)
-    d += timedelta(1)
+write_csv("data.csv", [data_d(base_d + timedelta(n)) for n in range((end_date - base_d).days)])
 
-cols = rows[0].keys()
+# Cycle stats
 
-data_csv = csv.writer(open("data.csv", "w"))
-data_csv.writerow(cols)
+def cycle_n(n):
+    r = {'n': n}
 
-for row in rows:
-    line = []
-    for col in cols:
-        if col not in row:
-            line.append("")
-        elif isinstance(row[col], float):
-            line.append("%.4f" % row[col])
-        else:
-            line.append(str(row[col]))
-    data_csv.writerow(line)
+    # base time (t_b)
+    r['asin(ln(t_b))'] = n/(n_cycles-0.5)
+    r['ln(t_b)'] = sin_ln_t(r['asin(ln(t_b))'])
+    r['t_b'] = e_t(r['ln(t_b)'])
+    r['d_b'] = date_t(r['t_b'])
+
+    # base price (p_b)
+    r['p_b'] = model_p(r['t_b'])
+    r['ln(p_b)'] = ln_p(r['p_b'])
+    r['ln(ln(p_b))'] = ln_p(r['ln(p_b)'])
+    r['asin(ln(ln(p_b)))'] = asin_p(r['ln(ln(p_b))'])
+
+    # peak time (t_p)
+    r['asin(ln(t_p))'] = (n+0.5)/(n_cycles-0.5)
+    r['ln(t_p)'] = sin_ln_t(r['asin(ln(t_p))'])
+    r['t_p'] = e_t(r['ln(t_p)'])
+    r['d_p'] = date_t(r['t_p'])
+
+    # peak price (p_p)
+    r['p_p'] = model_p(r['t_p'])
+    r['ln(p_p)'] = ln_p(r['p_p'])
+    r['ln(ln(p_p))'] = ln_p(r['ln(p_p)'])
+    r['asin(ln(ln(p_p)))'] = asin_p(r['ln(ln(p_p))'])
+
+    return r
+
+write_csv("cycle.csv", [cycle_n(n) for n in range(n_cycles)])

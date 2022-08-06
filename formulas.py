@@ -11,6 +11,7 @@ peak_supercycle_p = 20000
 peak_cycle_p = 68000
 
 n_cycles = 6
+n_periods = n_cycles-0.5
 
 # Formulas
 
@@ -27,7 +28,7 @@ def cycle_ln_ln_dp(t):
     dp_c = ln_ln_dp(1 - asin_ln_ln_p(peak_supercycle_p))
     b = (dp_sc + dp_c)/2
     a = dp_c - b
-    n = n_cycles-0.5
+    n = n_periods
     return a * sin(2*pi*n * (asin_ln_t(t) - 1/(4*n))) + b
 
 def resistance_asin_ln_ln_p(t):

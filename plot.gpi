@@ -152,3 +152,21 @@ set xlabel "asin(ln(t))"
 set ylabel "ln(ln(Δp))"
 plot [min_x:max_x] "data.csv" using (column("asin(ln(t))")):(column("ln(ln(dp))")) @black_line, \
      "data.csv" using (column("asin(ln(t))")):(column("ln(ln(dp_m))")) @blue_line
+
+# ixic cmp Δp% vs asin(ln(t))
+
+set format y "%.0f%%"
+
+set output "plot/ixic cmp dp% vs asin(ln(t)).png"
+set xlabel "t"
+set ylabel "Δp%"
+plot [min_x:max_x] "data.csv" using (column("asin(ln(t))")):(100*column("ln(ln(dp))%")) @black_line title "btc ln(ln(Δp))", \
+     "data.csv" using (column("asin(ln(t))")):(100*column("ixic_dp%")) @thin_blue_line title "ixic Δp"
+
+# ixic diff Δp% vs asin(ln(t))
+
+set output "plot/ixic diff dp% vs asin(ln(t)).png"
+set xlabel "t"
+set ylabel "Δp%"
+plot [min_x:max_x] "data.csv" using (column("asin(ln(t))")):(100*column("ixic_diff_dp%")) @black_line \
+                   title "btc ln(ln(Δp)) - ixic Δp"

@@ -11,7 +11,7 @@ base_ixic_p_r = exp(log(base_ixic_p_s) + log(peak_ixic_p_r) - log(peak_ixic_p_s)
 
 end_date = base_d + timedelta(2*(peak_d - base_d).days)
 
-def ema(v,k,n=90):
+def ema(v,k,n=30):
     return v[-1][k]/n + v[-2]['ema('+k+')']*(n-1)/n if len(v) > 1 else v[-1][k] if len(v) == 1 else None
 
 def write_csv(path, rows):
@@ -39,12 +39,12 @@ next(price_csv)
 for line in price_csv:
     prices[datetime.strptime(line[0], "%Y-%m-%d").date()] = {'btc': float(line[1]), 'ixic': float(line[2])}
 
-# Data points
+# Write data points
 
-rows = []
+v_d = []
 for d in (base_d + timedelta(n) for n in range((end_date - base_d).days)):
     r = {'d': d}
-    rows.append(r)
+    v_d.append(r)
 
     # time (t)
     r['t'] = time_d(r['d'])
@@ -55,7 +55,7 @@ for d in (base_d + timedelta(n) for n in range((end_date - base_d).days)):
     if d in prices:
         r['p'] = prices[d]['btc']
         r['ln(p)'] = ln_p(r['p'])
-        r['ln(ln(p))'] = ln_ln_p(r['p'])
+        r['ln(ln(p))'] = ln_p(r['ln(p)'])
         r['asin(ln(ln(p)))'] = asin_p(ln_ln_p(r['p']))
 
     # supercycle support (p_s)
@@ -89,53 +89,83 @@ for d in (base_d + timedelta(n) for n in range((end_date - base_d).days)):
     # price delta percentage (dp%)
     if d in prices:
         r['ln(ln(dp))%'] = (r['ln(ln(dp))'] - ln_ln_dp(0)) / (ln_ln_dp(1 - asin_ln_ln_p(peak_supercycle_p)) - ln_ln_dp(0))
-        r['ema(ln(ln(dp))%)'] = ema(rows, 'ln(ln(dp))%')
+        r['ema(ln(ln(dp))%)'] = ema(v_d, 'ln(ln(dp))%')
 
-    # market price (ixic_p)
+    # market price (ixic)
     if d in prices:
+        # ixic price (ixic_p)
         r['ixic_p'] = prices[d]['ixic']
         r['ln(ixic_p)'] = log(r['ixic_p'])
+
+        # ixic support (ixic_p_s)
         r['ixic_p_s'] = exp((log(peak_ixic_p_s) - log(base_ixic_p_s))/peak_t() * r['t'] + log(base_ixic_p_s))
         r['ln(ixic_p_s)'] = log(r['ixic_p_s'])
+
+        # ixic resistance (ixic_p_r)
         r['ixic_p_r'] = exp((log(peak_ixic_p_r) - log(base_ixic_p_r))/peak_t() * r['t'] + log(base_ixic_p_r))
         r['ln(ixic_p_r)'] = log(r['ixic_p_r'])
+
+        # ixic delta (ixic_dp)
         r['ixic_dp'] = r['ln(ixic_p)'] - r['ln(ixic_p_s)']
+
+        # ixic delta percentage (ixic_dp%)
         r['ixic_dp%'] = r['ixic_dp'] / (log(base_ixic_p_r) - log(base_ixic_p_s))
-        r['ema(ixic_dp%)'] = ema(rows, 'ixic_dp%')
+        r['ema(ixic_dp%)'] = ema(v_d, 'ixic_dp%')
         r['ixic_diff_dp%'] = r['ln(ln(dp))%'] - r['ixic_dp%']
-        r['ema(ixic_diff_dp%)'] = ema(rows, 'ixic_diff_dp%', 365)
+        r['ema(ixic_diff_dp%)'] = ema(v_d, 'ixic_diff_dp%', 365)
 
-write_csv("data.csv", rows)
+write_csv("data.csv", v_d)
 
-# Cycle stats
+# Write cycle stats
 
-def cycle_n(n):
+v_c = []
+for n in range(n_cycles):
     r = {'n': n}
+    v_c.append(r)
 
-    # base time (t_b)
-    r['asin(ln(t_b))'] = n/n_periods
-    r['ln(t_b)'] = sin_ln_t(r['asin(ln(t_b))'])
-    r['t_b'] = e_t(r['ln(t_b)'])
-    r['d_b'] = date_t(r['t_b'])
+    # model base time (t_m_b)
+    r['asin(ln(t_m_b))'] = n/n_periods
+    r['ln(t_m_b)'] = sin_ln_t(r['asin(ln(t_m_b))'])
+    r['t_m_b'] = e_t(r['ln(t_m_b)'])
+    r['d_m_b'] = date_t(r['t_m_b'])
 
-    # base price (p_b)
-    r['p_b'] = model_p(r['t_b'])
-    r['ln(p_b)'] = ln_p(r['p_b'])
-    r['ln(ln(p_b))'] = ln_p(r['ln(p_b)'])
-    r['asin(ln(ln(p_b)))'] = asin_p(r['ln(ln(p_b))'])
+    # model base price (p_m_b)
+    r['p_m_b'] = model_p(r['t_m_b'])
+    r['ln(p_m_b)'] = ln_p(r['p_m_b'])
+    r['ln(ln(p_m_b))'] = ln_p(r['ln(p_m_b)'])
+    r['asin(ln(ln(p_m_b)))'] = asin_p(r['ln(ln(p_m_b))'])
 
-    # peak time (t_p)
-    r['asin(ln(t_p))'] = (n+0.5)/n_periods
-    r['ln(t_p)'] = sin_ln_t(r['asin(ln(t_p))'])
-    r['t_p'] = e_t(r['ln(t_p)'])
-    r['d_p'] = date_t(r['t_p'])
+    # model peak time (t_m_p)
+    r['asin(ln(t_m_p))'] = (n+0.5)/n_periods
+    r['ln(t_m_p)'] = sin_ln_t(r['asin(ln(t_m_p))'])
+    r['t_m_p'] = e_t(r['ln(t_m_p)'])
+    r['d_m_p'] = date_t(r['t_m_p'])
 
-    # peak price (p_p)
-    r['p_p'] = model_p(r['t_p'])
+    # model peak price (p_m_p)
+    r['p_m_p'] = model_p(r['t_m_p'])
+    r['ln(p_m_p)'] = ln_p(r['p_m_p'])
+    r['ln(ln(p_m_p))'] = ln_p(r['ln(p_m_p)'])
+    r['asin(ln(ln(p_m_p)))'] = asin_p(r['ln(ln(p_m_p))'])
+
+for n in range(n_cycles):
+    r = v_c[n]
+
+    v = (s for s in
+        v_d if 'p' in s and
+        v_c[n]['d_m_b'] <= s['d'] and
+        (s['d'] < v_c[n+1]['d_m_b'] if n != (n_cycles-1) else True))
+    r_p = max(v, key=lambda s: s['p'])
+
+    # actual peak time (t_p)
+    r['d_p'] = r_p['d']
+    r['t_p'] = time_d(r['d_p'])
+    r['ln(t_p)'] = ln_t(r['t_p'])
+    r['asin(ln(t_p))'] = asin_ln_t(r['t_p'])
+
+    # actual peak price (p_p)
+    r['p_p'] = r_p['p']
     r['ln(p_p)'] = ln_p(r['p_p'])
     r['ln(ln(p_p))'] = ln_p(r['ln(p_p)'])
     r['asin(ln(ln(p_p)))'] = asin_p(r['ln(ln(p_p))'])
 
-    return r
-
-write_csv("cycle.csv", [cycle_n(n) for n in range(n_cycles)])
+write_csv("cycle.csv", v_c)

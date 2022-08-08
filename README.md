@@ -2,7 +2,7 @@
 
 ![p vs d](plot/p%20vs%20d.png)
 
-The cycles of BTC can be modeled with exponential waves of both price and time to achieve a remarkably good fit.
+All the cycles of BTC can be modeled with exponential waves of both price and time to achieve a remarkably good fit. With a 'big bang' from an initial single point, rapidly growing with very short cycles, but then cooling.
 
 With a support supercycle from when trading seriously began in Oct 2010 until a presumed peak in Nov 2021. Then the classic bubble cycles deviating from support. Including two usually unidentified crunched cycles during Oct and Nov 2010 that can be seen on a log-log scale. These first cycles in 2010 are usually considered noise to disregard by other models, but here they fit as well as the others.
 

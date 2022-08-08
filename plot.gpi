@@ -12,6 +12,7 @@ gray_line = line_color."'gray'"
 thin_blue_line = line_color."'blue'"
 light_blue_line = line_color."'light-blue'"
 blue_line = thin_blue_line." linewidth 2"
+red_line = line_color."'red'"
 
 # p vs d
 
@@ -30,17 +31,17 @@ plot [min_x:max_x] "data.csv" using (column("d")):(column("p")) @black_line, \
      "data.csv" using (column("d")):(column("p_r")) @black_line, \
      "data.csv" using (column("d")):(column("p_m")) @blue_line
 
-# p vs d (mirror)
+# p vs d [mirror]
 
 min_x = "2010-01-01"; max_x = "2034-01-01"
 
-set output "plot/p vs d (mirror).png"
+set output "plot/p vs d [mirror].png"
 plot [min_x:max_x] "data.csv" using (column("d")):(column("p")) @black_line, \
      "data.csv" using (column("d")):(column("p_s")) @black_line, \
      "data.csv" using (column("d")):(column("p_r")) @black_line, \
      "data.csv" using (column("d")):(column("p_m")) @blue_line
 
-# p vs d (2010)
+# p vs d [2010]
 
 min_x = "2010-10-01"; max_x = "2011-01-01"
 
@@ -48,20 +49,20 @@ set format x "%Y-%m"
 set yrange [0.01:1]
 set grid
 
-set output "plot/p vs d (2010).png"
+set output "plot/p vs d [2010].png"
 plot [min_x:max_x] "data.csv" using (column("d")):(column("p")) @black_line, \
      "data.csv" using (column("d")):(column("p_s")) @black_line, \
      "data.csv" using (column("d")):(column("p_r")) @black_line, \
      "data.csv" using (column("d")):(column("p_m")) @thin_blue_line
 
-# p vs d (2020-2023)
+# p vs d [2020-2023]
 
 min_x = "2020-06-01"; max_x = "2023-06-01"
 
 set yrange [5000:70000]
 unset logscale y
 
-set output "plot/p vs d (2020-2023).png"
+set output "plot/p vs d [2020-2023].png"
 plot [min_x:max_x] "data.csv" using (column("d")):(column("p")) @black_line, \
      "data.csv" using (column("d")):(column("p_s")) @black_line, \
      "data.csv" using (column("d")):(column("p_r")) @black_line, \
@@ -155,6 +156,19 @@ set ylabel "ln(ln(Δp))"
 plot [min_x:max_x] "data.csv" using (column("asin(ln(t))")):(column("ln(ln(dp))")) @black_line, \
      "data.csv" using (column("asin(ln(t))")):(column("ln(ln(dp_m))")) @blue_line
 
+# ixic Δp% vs asin(ln(t))
+
+set format y "%.0f%%"
+
+set output "plot/ixic dp% vs asin(ln(t)).png"
+set xlabel "d"
+set ylabel "Δp"
+plot [min_x:max_x] "data.csv" using (column("asin(ln(t))")):(100*column("ln(ln(dp))%")) @gray_line title "btc ln(ln(Δp))", \
+     "data.csv" using (column("asin(ln(t))")):(100*column("ixic_dp%")) @light_blue_line title "ixic Δp", \
+     "data.csv" using (column("asin(ln(t))")):(100*column("ema(ln(ln(dp))%)")) @black_line title "btc ema(ln(ln(Δp)))", \
+     "data.csv" using (column("asin(ln(t))")):(100*column("ema(ixic_dp%)")) @thin_blue_line title "ixic ema(Δp)"
+#     "data.csv" using (column("asin(ln(t))")):(100*(column("ema(ln(ln(dp))%)")-column("ema(ixic_dp%)"))) @red_line title "Δema(Δp)"
+
 # ixic Δp% vs d
 
 min_x = "2010-01-01"; max_x = "2023-01-01"
@@ -165,8 +179,9 @@ set format y "%.0f%%"
 
 set output "plot/ixic dp% vs d.png"
 set xlabel "d"
-set ylabel "Δp%"
+set ylabel "Δp"
 plot [min_x:max_x] "data.csv" using (column("d")):(100*column("ln(ln(dp))%")) @gray_line title "btc ln(ln(Δp))", \
      "data.csv" using (column("d")):(100*column("ixic_dp%")) @light_blue_line title "ixic Δp", \
      "data.csv" using (column("d")):(100*column("ema(ln(ln(dp))%)")) @black_line title "btc ema(ln(ln(Δp)))", \
      "data.csv" using (column("d")):(100*column("ema(ixic_dp%)")) @thin_blue_line title "ixic ema(Δp)"
+

@@ -4,15 +4,19 @@ import csv
 from datetime import *
 from formulas import *
 
-base_ixic_p_s = 2000
-peak_ixic_p_s = 9500
-peak_ixic_p_r = 16200
-base_ixic_p_r = exp(log(base_ixic_p_s) + log(peak_ixic_p_r) - log(peak_ixic_p_s))
+base_p_ixic_s = 2200
+base_p_ixic_r = 2700
+peak_p_ixic_s = 9750
+peak_p_ixic_r = 16000
 
 end_date = base_d + timedelta(2*(peak_d - base_d).days)
 
-def ema(v,k,n=30):
-    return v[-1][k]/n + v[-2]['ema('+k+')']*(n-1)/n if len(v) > 1 else v[-1][k] if len(v) == 1 else None
+def ema(v, i, k_ema, k_p, k_t='asin(ln(t))', w=0.005):
+    dt = v[i][k_t] - v[i-1][k_t]
+    if i == 0 or dt >= w:
+        return v[i][k_p]
+    else:
+        return v[i-1][k_ema]*(w-dt)/w + v[i][k_p]*dt/w
 
 p_of_d = {}
 price_csv = csv.reader(open("price.csv"))
@@ -55,6 +59,7 @@ for d in (base_d + timedelta(n) for n in range((end_date - base_d).days)):
         r['ln(dp)'] = ln_dp(r['dp'])
         r['ln(ln(dp))'] = ln_p(r['ln(dp)'])
 
+
     # model (m)
     r['p_m'] = model_p(r['t'])
     r['ln(p_m)'] = ln_p(r['p_m'])
@@ -67,29 +72,31 @@ for d in (base_d + timedelta(n) for n in range((end_date - base_d).days)):
 
     # price delta percentage (dp%)
     if d in p_of_d:
-        r['ln(ln(dp))%'] = (r['ln(ln(dp))'] - ln_ln_dp(0)) / (ln_ln_dp(1 - asin_ln_ln_p(peak_supercycle_p)) - ln_ln_dp(0))
-        r['ema(ln(ln(dp))%)'] = ema(v, 'ln(ln(dp))%')
+        percent_dp = lambda dp: (dp - ln_ln_dp(0)) / (ln_ln_dp(1 - asin_ln_ln_p(peak_supercycle_p)) - ln_ln_dp(0))
+        r['dp%'] = percent_dp(r['ln(ln(dp))'])
+        r['ema(dp%)'] = ema(v, len(v)-1, 'ema(dp%)', 'dp%')
+        r['dp_m%'] = percent_dp(r['ln(ln(dp_m))'])
 
-    # market price (ixic)
+    # ixic price (p_ixic)
     if d in p_of_d:
-        # ixic price (ixic_p)
-        r['ixic_p'] = p_of_d[d]['ixic']
-        r['ln(ixic_p)'] = log(r['ixic_p'])
+        r['p_ixic'] = p_of_d[d]['ixic']
+        r['ln(p_ixic)'] = log(r['p_ixic'])
 
-        # ixic support (ixic_p_s)
-        r['ixic_p_s'] = exp((log(peak_ixic_p_s) - log(base_ixic_p_s))/peak_t() * r['t'] + log(base_ixic_p_s))
-        r['ln(ixic_p_s)'] = log(r['ixic_p_s'])
+    # ixic support (p_ixic_s)
+    r['p_ixic_s'] = exp((log(peak_p_ixic_s) - log(base_p_ixic_s))/peak_t() * r['t'] + log(base_p_ixic_s))
+    r['ln(p_ixic_s)'] = log(r['p_ixic_s'])
 
-        # ixic resistance (ixic_p_r)
-        r['ixic_p_r'] = exp((log(peak_ixic_p_r) - log(base_ixic_p_r))/peak_t() * r['t'] + log(base_ixic_p_r))
-        r['ln(ixic_p_r)'] = log(r['ixic_p_r'])
+    # ixic resistance (p_ixic_r)
+    r['p_ixic_r'] = exp((log(peak_p_ixic_r) - log(base_p_ixic_r))/peak_t() * r['t'] + log(base_p_ixic_r))
+    r['ln(p_ixic_r)'] = log(r['p_ixic_r'])
 
-        # ixic delta (ixic_dp)
-        r['ixic_dp'] = r['ln(ixic_p)'] - r['ln(ixic_p_s)']
-
-        # ixic delta percentage (ixic_dp%)
-        r['ixic_dp%'] = r['ixic_dp'] / (log(base_ixic_p_r) - log(base_ixic_p_s))
-        r['ema(ixic_dp%)'] = ema(v, 'ixic_dp%')
+    # ixic delta (dp_ixic)
+    if d in p_of_d:
+        r['dp_ixic'] = r['ln(p_ixic)'] - r['ln(p_ixic_s)']
+        r['dp_ixic%'] = r['dp_ixic'] / (r['ln(p_ixic_r)'] - r['ln(p_ixic_s)'])
+        r['ema(dp_ixic%)'] = ema(v, len(v)-1, 'ema(dp_ixic%)', 'dp_ixic%')
+        r['dp%-dp_ixic%'] = r['dp%']-r['dp_ixic%']
+        r['ema(dp%-dp_ixic%)'] = ema(v, len(v)-1, 'ema(dp%-dp_ixic%)', 'dp%-dp_ixic%', w=0.01)
 
 s = v[0].keys()
 f = csv.writer(open("data.csv", "w"))

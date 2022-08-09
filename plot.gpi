@@ -5,6 +5,7 @@ set timefmt "%Y-%m-%d"
 set decimal locale
 set terminal png size 960,480
 set key noautotitle
+set key spacing 1.5
 
 line_color = "with lines linecolor "
 black_line = line_color."'black'"
@@ -12,7 +13,6 @@ gray_line = line_color."'gray'"
 thin_blue_line = line_color."'blue'"
 light_blue_line = line_color."'light-blue'"
 blue_line = thin_blue_line." linewidth 2"
-red_line = line_color."'red'"
 
 # p vs d
 
@@ -30,6 +30,19 @@ plot [min_x:max_x] "data.csv" using (column("d")):(column("p")) @black_line, \
      "data.csv" using (column("d")):(column("p_s")) @black_line, \
      "data.csv" using (column("d")):(column("p_r")) @black_line, \
      "data.csv" using (column("d")):(column("p_m")) @blue_line
+
+# p_ixic vs d
+
+min_x = "2010-01-01"; max_x = "2023-06-01"
+
+set yrange [1500:25000]
+
+set output "plot/p_ixic vs d.png"
+plot [min_x:max_x] "data.csv" using (column("d")):(column("p_ixic")) @black_line, \
+     "data.csv" using (column("d")):(column("p_ixic_s")) @black_line, \
+     "data.csv" using (column("d")):(column("p_ixic_r")) @black_line
+
+unset yrange
 
 # p vs d [mirror]
 
@@ -156,32 +169,49 @@ set ylabel "ln(ln(Δp))"
 plot [min_x:max_x] "data.csv" using (column("asin(ln(t))")):(column("ln(ln(dp))")) @black_line, \
      "data.csv" using (column("asin(ln(t))")):(column("ln(ln(dp_m))")) @blue_line
 
-# ixic Δp% vs asin(ln(t))
+# Δp, Δp_ixic vs asin(ln(t))
 
 set format y "%.0f%%"
+set yrange [-25:135]
 
-set output "plot/ixic dp% vs asin(ln(t)).png"
-set xlabel "d"
+set output "plot/dp, dp_ixic vs asin(ln(t)).png"
+set xlabel "asin(ln(t))"
 set ylabel "Δp"
-plot [min_x:max_x] "data.csv" using (column("asin(ln(t))")):(100*column("ln(ln(dp))%")) @gray_line title "btc ln(ln(Δp))", \
-     "data.csv" using (column("asin(ln(t))")):(100*column("ixic_dp%")) @light_blue_line title "ixic Δp", \
-     "data.csv" using (column("asin(ln(t))")):(100*column("ema(ln(ln(dp))%)")) @black_line title "btc ema(ln(ln(Δp)))", \
-     "data.csv" using (column("asin(ln(t))")):(100*column("ema(ixic_dp%)")) @thin_blue_line title "ixic ema(Δp)"
-#     "data.csv" using (column("asin(ln(t))")):(100*(column("ema(ln(ln(dp))%)")-column("ema(ixic_dp%)"))) @red_line title "Δema(Δp)"
+plot [min_x:max_x] "data.csv" using (column("asin(ln(t))")):(100*column("dp%")) @gray_line title "Δp_{btc}", \
+     "data.csv" using (column("asin(ln(t))")):(100*column("dp_ixic%")) @light_blue_line title "Δp_{ixic}", \
+     "data.csv" using (column("asin(ln(t))")-0.005):(100*column("ema(dp%)")) @black_line title "ema(Δp_{btc})", \
+     "data.csv" using (column("asin(ln(t))")-0.005):(100*column("ema(dp_ixic%)")) @thin_blue_line title "ema(Δp_{ixic})"
 
-# ixic Δp% vs d
+unset yrange
 
-min_x = "2010-01-01"; max_x = "2023-01-01"
+# Δp - Δp_ixic vs asin(ln(t))
 
-set xdata time
-set format x "%Y"
-set format y "%.0f%%"
-
-set output "plot/ixic dp% vs d.png"
-set xlabel "d"
+set output "plot/dp - dp_ixic vs asin(ln(t)).png"
+set xlabel "asin(ln(t))"
 set ylabel "Δp"
-plot [min_x:max_x] "data.csv" using (column("d")):(100*column("ln(ln(dp))%")) @gray_line title "btc ln(ln(Δp))", \
-     "data.csv" using (column("d")):(100*column("ixic_dp%")) @light_blue_line title "ixic Δp", \
-     "data.csv" using (column("d")):(100*column("ema(ln(ln(dp))%)")) @black_line title "btc ema(ln(ln(Δp)))", \
-     "data.csv" using (column("d")):(100*column("ema(ixic_dp%)")) @thin_blue_line title "ixic ema(Δp)"
+plot [min_x:max_x] \
+     "data.csv" using (column("asin(ln(t))")):(100*(column("dp%")-column("dp_ixic%"))) @gray_line title"Δp_{btc} - Δp_{ixic}", \
+     "data.csv" using (column("asin(ln(t))")):(100*(column("dp_m%")-0.5)) @thin_blue_line title "Δp_{model}", \
+     "data.csv" using (column("asin(ln(t))")-0.01):(100*column("ema(dp%-dp_ixic%)")) @black_line title "ema(Δp_{btc} - Δp_{ixic})", \
+     0 @black_line notitle
 
+# abs(Δp - Δp_ixic) vs asin(ln(t))
+
+set fit quiet
+set fit logfile "/dev/null"
+
+f(x) = a*x+b
+fit f(x) 'data.csv' using (column('asin(ln(t))')):(abs(column("dp%")-column("dp_ixic%"))) via a, b
+
+set yrange [-20:100]
+
+set output "plot/abs(dp - dp_ixic) vs asin(ln(t)).png"
+set xlabel "asin(ln(t))"
+set ylabel "abs(Δp)"
+plot [min_x:max_x] \
+     "data.csv" using (column("asin(ln(t))")):(100*abs(column("dp%")-column("dp_ixic%"))) @gray_line \
+         title "abs(Δp_{btc} - Δp_{ixic})", \
+     "data.csv" using (column("asin(ln(t))")-0.01):(100*abs(column("ema(dp%-dp_ixic%)"))) @black_line \
+         title "abs(ema(Δp_{btc} - Δp_{ixic}))", \
+     100*f(x) @blue_line, \
+     0 @black_line

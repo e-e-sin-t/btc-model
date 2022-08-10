@@ -1,62 +1,88 @@
 from datetime import *
 from math import *
 
-# Parameters
+class model:
+    # Parameters
 
-base_d = date(2010, 10, 7)
-base_p = 0.0575
+    def __init__(m, name):
+        m.name = name
 
-peak_d = date(2021, 11, 10)
-peak_supercycle_p = 20000
-peak_cycle_p = 68000
+        m.base_d = date(2010, 10, 7)
+        m.base_p = 0.0575
 
-n_cycles = 6
-n_periods = n_cycles-0.5
+        m.peak_d = date(2021, 11, 10)
+        m.peak_t = m.time_d(m.peak_d)
+        m.peak_ln_t = log(m.peak_t)+6
 
-# Formulas
+        m.peak_super_p = 20000
+        m.peak_cycle_p = 68000
 
-def model_p(t):
-    return e_e_p(sin_p(asin_p(supercycle_ln_ln_p(t)) + e_e_dp(cycle_ln_ln_dp(t))))
+        m.n_cycles = 6
+        m.n_periods = m.n_cycles - 0.5
 
-def supercycle_ln_ln_p(t):
-    b = ln_ln_p(base_p)
-    a = ln_ln_p(peak_supercycle_p) - b
-    return a * tri_ln_t(t) + b
+    # Formulas
 
-def cycle_ln_ln_dp(t):
-    dp_sc = ln_ln_dp(0)
-    dp_c = ln_ln_dp(1 - asin_ln_ln_p(peak_supercycle_p))
-    b = (dp_sc + dp_c)/2
-    a = dp_c - b
-    n = n_periods
-    return a * sin(2*pi*n * (asin_ln_t(t) - 1/(4*n))) + b
+    def p(m,t):
+        return m.exp_exp_p(m.sin_p(m.asin_p(m.super_ln_ln_p_s(t)) + m.exp_exp_dp(m.cycle_ln_ln_dp(t))))
 
-def resistance_asin_ln_ln_p(t):
-    return asin_p(supercycle_ln_ln_p(t)) + asin_ln_ln_p(peak_cycle_p) - asin_ln_ln_p(peak_supercycle_p)
+    def super_ln_ln_p_s(m,t):
+        b = m.ln_ln_p(m.base_p)
+        a = m.ln_ln_p(m.peak_super_p) - b
+        return a * m.tri_ln_t(t) + b
 
-# Sub-formulas
+    def super_asin_ln_ln_p_r(m,t):
+        return m.asin_p(m.super_ln_ln_p_s(t)) + m.asin_ln_ln_p(m.peak_cycle_p) - m.asin_ln_ln_p(m.peak_super_p)
 
-def time_d(d):    return ((d - base_d).days + 1)/365.0
-def date_t(t):    return base_d + timedelta(floor(365*t - 1))
-def ln_t(t):      return log(t)+6 if t <= peak_t() else 2*peak_ln_t() - (log(2*peak_t() - t) + 6)
-def e_t(t):       return exp(t-6)
+    def cycle_ln_ln_dp(m,t):
+        dp_sc = m.ln_ln_dp(0)
+        dp_c = m.ln_ln_dp(1 - m.asin_ln_ln_p(m.peak_super_p))
+        b = (dp_sc + dp_c)/2
+        a = dp_c - b
+        n = m.n_periods
+        return a * sin(2*pi*n * (m.asin_ln_t(t) - 1/(4*n))) + b
 
-def peak_t():     return time_d(peak_d)
-def peak_ln_t():  return ln_t(peak_t())
+    # Sub-formulas
 
-def asin_ln_t(t): return 2/pi * asin(ln_t(t)/peak_ln_t()) if t <= peak_t() else 2 - 2/pi * asin(2 - ln_t(t)/peak_ln_t())
-def sin_ln_t(t):  return peak_ln_t() * sin(pi/2 * t)
-def tri_ln_t(t):  return (2/pi * asin(sin(pi/peak_ln_t() * ln_t(t) - pi/2)) + 1)/2
+    def ln_p(m,p):         return log(p)+3
+    def ln_ln_p(m,p):      return m.ln_p(m.ln_p(p))
+    def exp_p(m,p):        return exp(p-3)
+    def exp_exp_p(m,p):    return m.exp_p(m.exp_p(p))
 
-def ln_p(p):      return log(p)+3
-def ln_ln_p(p):   return ln_p(ln_p(p))
-def e_p(p):       return exp(p-3)
-def e_e_p(p):     return e_p(e_p(p))
+    def asin_p(m,p):       return 2/pi * asin(p/m.ln_ln_p(m.peak_cycle_p))
+    def asin_ln_ln_p(m,p): return m.asin_p(m.ln_ln_p(p))
+    def sin_p(m,p):        return m.ln_ln_p(m.peak_cycle_p) * sin(pi/2 * p)
 
-def asin_p(p):       return 2/pi * asin(p/ln_ln_p(peak_cycle_p))
-def asin_ln_ln_p(p): return asin_p(ln_ln_p(p))
-def sin_p(p):        return ln_ln_p(peak_cycle_p) * sin(pi/2 * p)
+    def ln_dp(m,dp):       return m.ln_p(dp + 0.1)
+    def ln_ln_dp(m,dp):    return m.ln_p(m.ln_dp(dp))
+    def exp_exp_dp(m,dp):  return m.exp_exp_p(dp) - 0.1
 
-def ln_dp(dp):    return ln_p(dp + 0.1)
-def ln_ln_dp(dp): return ln_p(ln_dp(dp))
-def e_e_dp(dp):   return e_e_p(dp) - 0.1
+    def time_d(m,d):       return ((d - m.base_d).days + 1)/365.0
+    def date_t(m,t):       return m.base_d + timedelta(floor(365*t - 1))
+    def ln_t(m,t):         return log(t)+6
+    def exp_t(m,t):        return exp(t-6)
+
+    def sin_ln_t(m,t):     return m.peak_ln_t * sin(pi/2 * t)
+    def tri_ln_t(m,t):     return (2/pi * asin(sin(pi*m.ln_t(t)/m.peak_ln_t - pi/2)) + 1)/2
+
+    def asin_ln_t(m,t):
+        a = m.ln_t(t)/m.peak_ln_t
+        n, r = floor(a), a % 1
+        return n + 2/pi*asin(r) if n % 2 == 0 else n+1 - 2/pi*asin(1-r)
+
+# Models
+
+class naive_model(model):
+    def __init__(m): super().__init__('naive')
+
+class mirror_model(model):
+    def __init__(m): super().__init__('mirror')
+
+    def ln_t(m,t):
+        a = t/m.peak_t
+        n, r = floor(a), a % 1
+        return m.peak_ln_t*n + (log(m.peak_t*r)+6 if r > 0 else 0) if n % 2 == 0 else m.peak_ln_t*(n+1) - (log(m.peak_t*(1-r)) + 6)
+
+class converge_model(model):
+    def __init__(m): super().__init__('converge')
+
+models = (naive_model(), mirror_model(), converge_model())

@@ -82,7 +82,4 @@ class mirror_model(model):
         n, r = floor(a), a % 1
         return m.peak_ln_t*n + (log(m.peak_t*r)+6 if r > 0 else 0) if n % 2 == 0 else m.peak_ln_t*(n+1) - (log(m.peak_t*(1-r)) + 6)
 
-class converge_model(model):
-    def __init__(m): super().__init__('converge')
-
-models = (naive_model(), mirror_model(), converge_model())
+models = (naive_model(), mirror_model())

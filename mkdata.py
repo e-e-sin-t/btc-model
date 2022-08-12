@@ -9,28 +9,19 @@ base_p_ixic_r = 2700
 peak_p_ixic_s = 9750
 peak_p_ixic_r = 16000
 
-p_of_d = {}
-p_csv = csv.reader(open("data/price.csv"))
-next(p_csv)
-for l in p_csv:
-    d = datetime.strptime(l[0], "%Y-%m-%d").date()
-    p_of_d[d] = {'btc': float(l[1]), 'ixic': float(l[2])}
+def read_price_csv(s):
+    f = csv.reader(open("data/"+s+"-price.csv"))
+    next(f)
+    return {datetime.strptime(l[0], "%Y-%m-%d").date(): float(l[1]) for l in f}
 
-def ema(v, i, k_ema, k_p, k_t='asin(ln(t))', w=0.005):
-    dt = v[i][k_t] - v[i-1][k_t]
-    if i == 0 or dt >= w:
-        return v[i][k_p]
-    else:
-        return v[i-1][k_ema]*(w-dt)/w + v[i][k_p]*dt/w
+p_btc, p_ixic = read_price_csv('btc'), read_price_csv('ixic')
 
-def write_csv(f, v):
-    s = v[0].keys()
-    f = csv.writer(open(f, "w"))
-    f.writerow(s)
-
+def write_csv(s,v):
+    f = csv.writer(open(s, "w"))
+    f.writerow(v[0].keys())
     for r in v:
         l = []
-        for k in s:
+        for k in v[0].keys():
             if not r.get(k):
                 l.append("")
             elif isinstance(r[k], float):
@@ -38,6 +29,13 @@ def write_csv(f, v):
             else:
                 l.append(str(r[k]))
         f.writerow(l)
+
+def ema(v, i, k_ema, k_p, k_t='asin(ln(t))', w=0.005):
+    dt = v[i][k_t] - v[i-1][k_t]
+    if i == 0 or dt >= w:
+        return v[i][k_p]
+    else:
+        return v[i-1][k_ema]*(w-dt)/w + v[i][k_p]*dt/w
 
 def model_data(m):
     end_date = m.base_d + timedelta(3*(m.peak_d - m.base_d).days)
@@ -54,8 +52,8 @@ def model_data(m):
         r['asin(ln(t))'] = m.asin_ln_t(r['t'])
 
         # price history (p)
-        if d in p_of_d:
-            r['p'] = p_of_d[d]['btc']
+        if d in p_btc:
+            r['p'] = p_btc[d]
             r['ln(p)'] = m.ln_p(r['p'])
             r['ln(ln(p))'] = m.ln_p(r['ln(p)'])
             r['asin(ln(ln(p)))'] = m.asin_p(m.ln_ln_p(r['p']))
@@ -73,7 +71,7 @@ def model_data(m):
         r['p_r'] = m.exp_p(r['ln(p_r)'])
 
         # price delta (dp)
-        if d in p_of_d:
+        if d in p_btc:
             r['dp'] = r['asin(ln(ln(p)))'] - r['asin(ln(ln(p_s)))']
             r['ln(dp)'] = m.ln_dp(r['dp'])
             r['ln(ln(dp))'] = m.ln_p(r['ln(dp)'])
@@ -84,21 +82,21 @@ def model_data(m):
         r['ln(p_m)'] = m.ln_p(r['p_m'])
         r['ln(ln(p_m))'] = m.ln_p(r['ln(p_m)'])
         r['asin(ln(ln(p_m)))'] = m.asin_p(r['ln(ln(p_m))'])
-        if d in p_of_d:
+        if d in p_btc:
             r['dp_m'] = r['asin(ln(ln(p_m)))'] - r['asin(ln(ln(p_s)))']
             r['ln(dp_m)'] = m.ln_dp(r['dp_m'])
             r['ln(ln(dp_m))'] = m.ln_p(r['ln(dp_m)'])
 
         # price delta percentage (dp%)
-        if d in p_of_d:
+        if d in p_btc:
             percent_dp = lambda dp: (dp - m.ln_ln_dp(0)) / (m.ln_ln_dp(1 - m.asin_ln_ln_p(m.peak_super_p)) - m.ln_ln_dp(0))
             r['dp%'] = percent_dp(r['ln(ln(dp))'])
             r['ema(dp%)'] = ema(v, len(v)-1, 'ema(dp%)', 'dp%')
             r['dp_m%'] = percent_dp(r['ln(ln(dp_m))'])
 
         # ixic price (p_ixic)
-        if d in p_of_d:
-            r['p_ixic'] = p_of_d[d]['ixic']
+        if d in p_ixic:
+            r['p_ixic'] = p_ixic[d]
             r['ln(p_ixic)'] = log(r['p_ixic'])
 
         # ixic support (p_ixic_s)
@@ -110,7 +108,7 @@ def model_data(m):
         r['ln(p_ixic_r)'] = log(r['p_ixic_r'])
 
         # ixic delta (dp_ixic)
-        if d in p_of_d:
+        if d in p_btc:
             r['dp_ixic'] = r['ln(p_ixic)'] - r['ln(p_ixic_s)']
             r['dp_ixic%'] = r['dp_ixic'] / (r['ln(p_ixic_r)'] - r['ln(p_ixic_s)'])
             r['ema(dp_ixic%)'] = ema(v, len(v)-1, 'ema(dp_ixic%)', 'dp_ixic%')
@@ -120,4 +118,4 @@ def model_data(m):
     return v
 
 for m in models:
-    write_csv("data/"+m.name+".csv", model_data(m))
+    write_csv("data/"+m.name+"-model.csv", model_data(m))

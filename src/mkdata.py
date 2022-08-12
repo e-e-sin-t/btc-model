@@ -2,7 +2,7 @@
 
 import csv
 from datetime import *
-from formulas import *
+from model import *
 
 base_p_ixic_s = 2200
 base_p_ixic_r = 2700

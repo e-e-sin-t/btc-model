@@ -1,7 +1,7 @@
 all:
-	./mkdata.py
+	src/mkdata.py
 	@mkdir -p plot
-	./plot.gpi
+	src/plot.gpi
 
 clean:
 	rm -rf data.csv cycle.csv plot

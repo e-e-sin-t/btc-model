@@ -49,33 +49,32 @@ def model_data(m):
         # time (t)
         r['t'] = m.time_d(r['d'])
         r['ln(t)'] = m.ln_t(r['t'])
-        r['asin(ln(t))'] = m.asin_ln_t(r['t'])
+        r['asin(ln(t))'] = m.asin_t(r['ln(t)'])
 
         # price history (p)
         if d in p_btc:
             r['p'] = p_btc[d]
             r['ln(p)'] = m.ln_p(r['p'])
             r['ln(ln(p))'] = m.ln_p(r['ln(p)'])
-            r['asin(ln(ln(p)))'] = m.asin_p(m.ln_ln_p(r['p']))
+            r['asin(ln(ln(p)))'] = m.asin_p(r['ln(ln(p))'])
 
         # supercycle support (p_s)
-        r['ln(ln(p_s))'] = m.super_ln_ln_p_s(r['t'])
+        r['ln(ln(p_s))'] = m.p_s(r['ln(t)'])
         r['asin(ln(ln(p_s)))'] = m.asin_p(r['ln(ln(p_s))'])
         r['ln(p_s)'] = m.exp_p(r['ln(ln(p_s))'])
         r['p_s'] = m.exp_p(r['ln(p_s)'])
 
-        # cycle resistance (p_r)
-        r['asin(ln(ln(p_r)))'] = m.super_asin_ln_ln_p_r(r['t'])
+        # supercycle resistance (p_r)
+        r['asin(ln(ln(p_r)))'] = m.p_r(r['ln(t)'])
         r['ln(ln(p_r))'] = m.sin_p(r['asin(ln(ln(p_r)))'])
         r['ln(p_r)'] = m.exp_p(r['ln(ln(p_r))'])
         r['p_r'] = m.exp_p(r['ln(p_r)'])
 
-        # price delta (dp)
+        # price delta from supercycle support (dp)
         if d in p_btc:
             r['dp'] = r['asin(ln(ln(p)))'] - r['asin(ln(ln(p_s)))']
             r['ln(dp)'] = m.ln_dp(r['dp'])
             r['ln(ln(dp))'] = m.ln_p(r['ln(dp)'])
-
 
         # model (m)
         r['p_m'] = m.p(r['t'])
@@ -87,7 +86,7 @@ def model_data(m):
             r['ln(dp_m)'] = m.ln_dp(r['dp_m'])
             r['ln(ln(dp_m))'] = m.ln_p(r['ln(dp_m)'])
 
-        # price delta percentage (dp%)
+        # price delta percentage between supercycle support and resistance (dp%)
         if d in p_btc:
             percent_dp = lambda dp: (dp - m.ln_ln_dp(0)) / (m.ln_ln_dp(1 - m.asin_ln_ln_p(m.peak_super_p)) - m.ln_ln_dp(0))
             r['dp%'] = percent_dp(r['ln(ln(dp))'])

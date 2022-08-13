@@ -7,7 +7,7 @@ set terminal png size 960,480
 set key noautotitle
 set key spacing 1.75
 
-naive_model = "data/naive-model.csv"
+basic_model = "data/basic-model.csv"
 mirror_model = "data/mirror-model.csv"
 
 line_color = "with lines linecolor "
@@ -28,27 +28,27 @@ set ylabel "price"
 
 set output "plot/p vs d.png"
 plot ["2010-06-01":"2023-01-01"] [0.01:200000] \
-     naive_model using (column("d")):(column("p")) @black_line, \
-     naive_model using (column("d")):(column("p_s")) @black_line, \
-     naive_model using (column("d")):(column("p_r")) @black_line, \
-     naive_model using (column("d")):(column("p_m")) @thick_blue_line
+     basic_model using (column("d")):(column("p")) @black_line, \
+     basic_model using (column("d")):(column("p_s")) @black_line, \
+     basic_model using (column("d")):(column("p_r")) @black_line, \
+     basic_model using (column("d")):(column("p_m")) @thick_blue_line
 
 # p_ixic vs d
 
 set output "plot/p_ixic vs d.png"
 plot ["2010-01-01":"2023-06-01"] [1500:25000] \
-     naive_model using (column("d")):(column("p_ixic")) @black_line, \
-     naive_model using (column("d")):(column("p_ixic_s")) @black_line, \
-     naive_model using (column("d")):(column("p_ixic_r")) @black_line
+     basic_model using (column("d")):(column("p_ixic")) @black_line, \
+     basic_model using (column("d")):(column("p_ixic_s")) @black_line, \
+     basic_model using (column("d")):(column("p_ixic_r")) @black_line
 
-# p vs d [naive]
+# p vs d [basic]
 
-set output "plot/p vs d [naive].png"
+set output "plot/p vs d [basic].png"
 plot ["2010-01-01":"2040-01-01"] [0.01:200000] \
-     naive_model using (column("d")):(column("p")) @black_line, \
-     naive_model using (column("d")):(column("p_s")) @black_line, \
-     naive_model using (column("d")):(column("p_r")) @black_line, \
-     naive_model using (column("d")):(column("p_m")) @thick_blue_line
+     basic_model using (column("d")):(column("p")) @black_line, \
+     basic_model using (column("d")):(column("p_s")) @black_line, \
+     basic_model using (column("d")):(column("p_r")) @black_line, \
+     basic_model using (column("d")):(column("p_m")) @thick_blue_line
 
 # p vs d [mirror]
 
@@ -66,10 +66,10 @@ set grid
 
 set output "plot/p vs d [2010].png"
 plot ["2010-10-01":"2011-01-01"] [0.01:2] \
-     naive_model using (column("d")):(column("p")) @black_line, \
-     naive_model using (column("d")):(column("p_s")) @black_line, \
-     naive_model using (column("d")):(column("p_r")) @black_line, \
-     naive_model using (column("d")):(column("p_m")) @blue_line
+     basic_model using (column("d")):(column("p")) @black_line, \
+     basic_model using (column("d")):(column("p_s")) @black_line, \
+     basic_model using (column("d")):(column("p_r")) @black_line, \
+     basic_model using (column("d")):(column("p_m")) @blue_line
 
 # p vs d [2020-2023]
 
@@ -77,10 +77,10 @@ unset logscale y
 
 set output "plot/p vs d [2020-2023].png"
 plot ["2020-06-01":"2023-06-01"] [5000:70000] \
-     naive_model using (column("d")):(column("p")) @black_line, \
-     naive_model using (column("d")):(column("p_s")) @black_line, \
-     naive_model using (column("d")):(column("p_r")) @black_line, \
-     naive_model using (column("d")):(column("p_m")) @blue_line
+     basic_model using (column("d")):(column("p")) @black_line, \
+     basic_model using (column("d")):(column("p_s")) @black_line, \
+     basic_model using (column("d")):(column("p_r")) @black_line, \
+     basic_model using (column("d")):(column("p_m")) @blue_line
 
 unset xdata; unset format; unset grid
 
@@ -90,10 +90,10 @@ set output "plot/ln(p) vs t.png"
 set xlabel "t"
 set ylabel "ln(p)"
 plot [0:12] \
-     naive_model using (column("t")):(column("ln(p)")) @black_line, \
-     naive_model using (column("t")):(column("ln(p_s)")) @black_line, \
-     naive_model using (column("t")):(column("ln(p_r)")) @black_line, \
-     naive_model using (column("t")):(column("ln(p_m)")) @thick_blue_line
+     basic_model using (column("t")):(column("ln(p)")) @black_line, \
+     basic_model using (column("t")):(column("ln(p_s)")) @black_line, \
+     basic_model using (column("t")):(column("ln(p_r)")) @black_line, \
+     basic_model using (column("t")):(column("ln(p_m)")) @thick_blue_line
 
 # ln(p) vs ln(t)
 
@@ -102,30 +102,30 @@ set xrange [0:8.5]
 set output "plot/ln(p) vs ln(t).png"
 set xlabel "ln(t)"
 set ylabel "ln(p)"
-plot naive_model using (column("ln(t)")):(column("ln(p)")) @black_line, \
-     naive_model using (column("ln(t)")):(column("ln(p_s)")) @black_line, \
-     naive_model using (column("ln(t)")):(column("ln(p_r)")) @black_line, \
-     naive_model using (column("ln(t)")):(column("ln(p_m)")) @thick_blue_line
+plot basic_model using (column("ln(t)")):(column("ln(p)")) @black_line, \
+     basic_model using (column("ln(t)")):(column("ln(p_s)")) @black_line, \
+     basic_model using (column("ln(t)")):(column("ln(p_r)")) @black_line, \
+     basic_model using (column("ln(t)")):(column("ln(p_m)")) @thick_blue_line
 
 # ln(ln(p)) vs ln(t)
 
 set output "plot/ln(ln(p)) vs ln(t).png"
 set xlabel "ln(t)"
 set ylabel "ln(ln(p))"
-plot naive_model using (column("ln(t)")):(column("ln(ln(p))")) @black_line, \
-     naive_model using (column("ln(t)")):(column("ln(ln(p_s))")) @black_line, \
-     naive_model using (column("ln(t)")):(column("ln(ln(p_r))")) @black_line, \
-     naive_model using (column("ln(t)")):(column("ln(ln(p_m))")) @thick_blue_line
+plot basic_model using (column("ln(t)")):(column("ln(ln(p))")) @black_line, \
+     basic_model using (column("ln(t)")):(column("ln(ln(p_s))")) @black_line, \
+     basic_model using (column("ln(t)")):(column("ln(ln(p_r))")) @black_line, \
+     basic_model using (column("ln(t)")):(column("ln(ln(p_m))")) @thick_blue_line
 
 # asin(ln(ln(p))) vs ln(t)
 
 set output "plot/asin(ln(ln(p))) vs ln(t).png"
 set xlabel "ln(t)"
 set ylabel "asin(ln(ln(p)))"
-plot naive_model using (column("ln(t)")):(column("asin(ln(ln(p)))")) @black_line, \
-     naive_model using (column("ln(t)")):(column("asin(ln(ln(p_s)))")) @black_line, \
-     naive_model using (column("ln(t)")):(column("asin(ln(ln(p_r)))")) @black_line, \
-     naive_model using (column("ln(t)")):(column("asin(ln(ln(p_m)))")) @thick_blue_line
+plot basic_model using (column("ln(t)")):(column("asin(ln(ln(p)))")) @black_line, \
+     basic_model using (column("ln(t)")):(column("asin(ln(ln(p_s)))")) @black_line, \
+     basic_model using (column("ln(t)")):(column("asin(ln(ln(p_r)))")) @black_line, \
+     basic_model using (column("ln(t)")):(column("asin(ln(ln(p_m)))")) @thick_blue_line
 
 unset xrange
 
@@ -135,10 +135,10 @@ set output "plot/asin(ln(ln(p))) vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "asin(ln(ln(p)))"
 plot [0:1.1] \
-     naive_model using (column("asin(ln(t))")):(column("asin(ln(ln(p)))")) @black_line, \
-     naive_model using (column("asin(ln(t))")):(column("asin(ln(ln(p_s)))")) @black_line, \
-     naive_model using (column("asin(ln(t))")):(column("asin(ln(ln(p_r)))")) @black_line, \
-     naive_model using (column("asin(ln(t))")):(column("asin(ln(ln(p_m)))")) @thick_blue_line
+     basic_model using (column("asin(ln(t))")):(column("asin(ln(ln(p)))")) @black_line, \
+     basic_model using (column("asin(ln(t))")):(column("asin(ln(ln(p_s)))")) @black_line, \
+     basic_model using (column("asin(ln(t))")):(column("asin(ln(ln(p_r)))")) @black_line, \
+     basic_model using (column("asin(ln(t))")):(column("asin(ln(ln(p_m)))")) @thick_blue_line
 
 # Δp vs asin(ln(t))
 
@@ -148,24 +148,24 @@ set output "plot/dp vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set xrange [0:1.1]
 set ylabel "Δp"
-plot naive_model using (column("asin(ln(t))")):(column("dp")) @black_line, \
-     naive_model using (column("asin(ln(t))")):(column("dp_m")) @thick_blue_line
+plot basic_model using (column("asin(ln(t))")):(column("dp")) @black_line, \
+     basic_model using (column("asin(ln(t))")):(column("dp_m")) @thick_blue_line
 
 # ln(Δp) vs asin(ln(t))
 
 set output "plot/ln(dp) vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "ln(Δp)"
-plot naive_model using (column("asin(ln(t))")):(column("ln(dp)")) @black_line, \
-     naive_model using (column("asin(ln(t))")):(column("ln(dp_m)")) @thick_blue_line
+plot basic_model using (column("asin(ln(t))")):(column("ln(dp)")) @black_line, \
+     basic_model using (column("asin(ln(t))")):(column("ln(dp_m)")) @thick_blue_line
 
 # ln(ln(Δp)) vs asin(ln(t))
 
 set output "plot/ln(ln(dp)) vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "ln(ln(Δp))"
-plot naive_model using (column("asin(ln(t))")):(column("ln(ln(dp))")) @black_line, \
-     naive_model using (column("asin(ln(t))")):(column("ln(ln(dp_m))")) @thick_blue_line
+plot basic_model using (column("asin(ln(t))")):(column("ln(ln(dp))")) @black_line, \
+     basic_model using (column("asin(ln(t))")):(column("ln(ln(dp_m))")) @thick_blue_line
 
 # Δp, Δp_ixic vs asin(ln(t))
 
@@ -175,10 +175,10 @@ set output "plot/dp, dp_ixic vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "Δp"
 set yrange [-25:135]
-plot naive_model using (column("asin(ln(t))")):(100*column("dp%")) @gray_line title "ln(ln(Δp_{btc}))", \
-     naive_model using (column("asin(ln(t))")):(100*column("dp_ixic%")) @light_blue_line title "ln(Δp_{ixic})", \
-     naive_model using (column("asin(ln(t))")-0.005):(100*column("ema(dp%)")) @black_line title "ema(ln(ln(Δp_{btc})))", \
-     naive_model using (column("asin(ln(t))")-0.005):(100*column("ema(dp_ixic%)")) @blue_line title "ema(ln(Δp_{ixic}))"
+plot basic_model using (column("asin(ln(t))")):(100*column("dp%")) @gray_line title "ln(ln(Δp_{btc}))", \
+     basic_model using (column("asin(ln(t))")):(100*column("dp_ixic%")) @light_blue_line title "ln(Δp_{ixic})", \
+     basic_model using (column("asin(ln(t))")-0.005):(100*column("ema(dp%)")) @black_line title "ema(ln(ln(Δp_{btc})))", \
+     basic_model using (column("asin(ln(t))")-0.005):(100*column("ema(dp_ixic%)")) @blue_line title "ema(ln(Δp_{ixic}))"
 
 unset yrange
 
@@ -187,10 +187,10 @@ unset yrange
 set output "plot/dp - dp_ixic vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "Δp"
-plot naive_model using (column("asin(ln(t))")):(100*(column("dp%")-column("dp_ixic%"))) @gray_line \
+plot basic_model using (column("asin(ln(t))")):(100*(column("dp%")-column("dp_ixic%"))) @gray_line \
          title"ln(ln(Δp_{btc})) - ln(Δp_{ixic})", \
-     naive_model using (column("asin(ln(t))")):(100*(column("dp_m%")-0.5)) @blue_line title "ln(ln(Δp_{model}))", \
-     naive_model using (column("asin(ln(t))")-0.01):(100*column("ema(dp%-dp_ixic%)")) @black_line \
+     basic_model using (column("asin(ln(t))")):(100*(column("dp_m%")-0.5)) @blue_line title "ln(ln(Δp_{model}))", \
+     basic_model using (column("asin(ln(t))")-0.01):(100*column("ema(dp%-dp_ixic%)")) @black_line \
          title "ema(ln(ln(Δp_{btc})) - ln(Δp_{ixic}))", \
      0 @black_line notitle
 
@@ -200,15 +200,15 @@ set fit quiet
 set fit logfile "/dev/null"
 
 f(x) = a*exp(-b*x)
-fit f(x) naive_model using (column('asin(ln(t))')):(abs(column("dp%")-column("dp_ixic%"))) via a, b
+fit f(x) basic_model using (column('asin(ln(t))')):(abs(column("dp%")-column("dp_ixic%"))) via a, b
 
 set output "plot/abs(dp - dp_ixic) vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "abs(Δp)"
 set yrange [-20:100] 
-plot naive_model using (column("asin(ln(t))")):(100*abs(column("dp%")-column("dp_ixic%"))) @gray_line \
+plot basic_model using (column("asin(ln(t))")):(100*abs(column("dp%")-column("dp_ixic%"))) @gray_line \
          title "abs(ln(ln(Δp_{btc})) - ln(Δp_{ixic}))", \
-     naive_model using (column("asin(ln(t))")-0.01):(100*abs(column("ema(dp%-dp_ixic%)"))) @black_line \
+     basic_model using (column("asin(ln(t))")-0.01):(100*abs(column("ema(dp%-dp_ixic%)"))) @black_line \
          title "abs(ema(ln(ln(Δp_{btc})) - ln(Δp_{ixic})))", \
      100*f(x) @blue_line title sprintf("fit(a·e^{-b·t}), a=%0.3f, b=%0.3f", a, b), \
      0 @black_line

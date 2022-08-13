@@ -72,8 +72,8 @@ class model:
 
 # Models
 
-class naive_model(model):
-    def __init__(m): super().__init__('naive')
+class basic_model(model):
+    def __init__(m): super().__init__('basic')
 
 class mirror_model(model):
     def __init__(m): super().__init__('mirror')
@@ -86,4 +86,4 @@ class mirror_model(model):
         else:
             return m.peak_ln_t*(n+1) - (log(m.peak_t*(1-r)) + 6)
 
-models = (naive_model(), mirror_model())
+models = (basic_model(), mirror_model())

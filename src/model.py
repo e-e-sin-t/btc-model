@@ -2,8 +2,7 @@ from datetime import *
 from math import *
 
 class model:
-    # Parameters
-
+    # parameters
     def __init__(m, name):
         m.name = name
 
@@ -22,15 +21,15 @@ class model:
 
     # price in linear (p,t) coordinates
     def p(m,t):
-        return m.exp_exp_p(m.sin_p(m.asin_p(m.p_s(m.ln_t(t))) + m.exp_exp_dp(m.dp_c(m.asin_ln_t(t)))))
+        return m.exp_exp_p(m.sin_p(m.asin_p(m.p_s(m.ln_t(t))) + m.dp_c(m.asin_ln_t(t))))
 
     # supercycle support triangle wave in (ln(t), ln(ln(p))) coordinates
-    def p_s(m,t):
+    def p_s(m,t,p=None):
         b = m.ln_ln_p(m.base_p)
-        a = m.ln_ln_p(m.peak_super_p) - b
+        a = m.ln_ln_p(p or m.peak_super_p) - b
         return a*(2/pi*asin(sin(pi*t/m.peak_ln_t - pi/2)) + 1)/2 + b
 
-    # supercycle resistance wave in (ln(t), ln(ln(p))) coordinates
+    # supercycle resistance wave in (ln(t), asin(ln(ln(p)))) coordinates
     def p_r(m,t):
         return m.asin_p(m.p_s(t)) + m.asin_ln_ln_p(m.peak_cycle_p) - m.asin_ln_ln_p(m.peak_super_p)
 
@@ -41,9 +40,9 @@ class model:
         b = (dp_sc + dp_c)/2
         a = dp_c - b
         n = m.n_periods
-        return a*sin(2*pi*n*(t - 1/(4*n))) + b
+        return m.exp_exp_dp(a*sin(2*pi*n*(t - 1/(4*n))) + b)
 
-    # Sub-formulas
+    # sub-formulas
 
     def ln_p(m,p):         return log(p)+3
     def ln_ln_p(m,p):      return m.ln_p(m.ln_p(p))
@@ -70,14 +69,13 @@ class model:
         else:
             return n+1 - 2/pi*asin(1-r)
 
-# Models
-
 class basic_model(model):
     def __init__(m): super().__init__('basic')
 
 class mirror_model(model):
     def __init__(m): super().__init__('mirror')
 
+    # reverse logarithmic time after peak
     def ln_t(m,t):
         a = t/m.peak_t
         n, r = floor(a), a % 1

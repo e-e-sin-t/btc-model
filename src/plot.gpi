@@ -53,15 +53,38 @@ plot ["2010-01-01":"2040-01-01"] [0.01:200000] \
 # p vs d [mirror]
 
 set output "plot/p vs d [mirror].png"
-plot ["2010-01-01":"2040-01-01"] [0.01:200000] \
+plot ["2010-01-01":"2034-01-01"] [0.01:200000] \
      mirror_model using (column("d")):(column("p")) @black_line, \
      mirror_model using (column("d")):(column("p_s")) @black_line, \
      mirror_model using (column("d")):(column("p_r")) @black_line, \
      mirror_model using (column("d")):(column("p_m")) @thick_blue_line
 
+# p vs d [apy]
+
+mid_d = '2021-06-01'
+set label 10 '10%' at mid_d, 0.50
+set label 30 '30%' at mid_d, 15
+set label 50 '50%' at mid_d, 200
+set label 75 '75%' at mid_d, 1750
+set label 85 '85%' at mid_d, 9000
+
+set output "plot/p vs d [apy].png"
+plot ["2010-01-01":"2034-01-01"] [0.01:200000] \
+     mirror_model using (column("d")):(column("p")) @black_line, \
+     mirror_model using (column("d")):(column("p_apy_10%")) @gray_line, \
+     mirror_model using (column("d")):(column("p_apy_30%")) @gray_line, \
+     mirror_model using (column("d")):(column("p_apy_50%")) @gray_line, \
+     mirror_model using (column("d")):(column("p_apy_70%")) @gray_line, \
+     mirror_model using (column("d")):(column("p_apy_85%")) @gray_line, \
+     mirror_model using (column("d")):(column("p_s")) @black_line, \
+     mirror_model using (column("d")):(column("p_r")) @black_line, \
+     mirror_model using (column("d")):(column("p_m")) @thick_blue_line
+
+unset label 10; unset label 30; unset label 50; unset label 75; unset label 85
+
 # p vs d [2010]
 
-set format x "%Y-%m"
+set format x "%Y-%m-%d"
 set grid
 
 set output "plot/p vs d [2010].png"

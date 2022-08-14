@@ -9,6 +9,8 @@ base_p_ixic_r = 2700
 peak_p_ixic_s = 9750
 peak_p_ixic_r = 16000
 
+# CSV files
+
 def read_price_csv(s):
     f = csv.reader(open("data/"+s+"-price.csv"))
     next(f)
@@ -30,12 +32,34 @@ def write_csv(s,v):
                 l.append(str(r[k]))
         f.writerow(l)
 
+# EMA
+
 def ema(v, i, k_ema, k_p, k_t='asin(ln(t))', w=0.005):
     dt = v[i][k_t] - v[i-1][k_t]
     if i == 0 or dt >= w:
         return v[i][k_p]
     else:
         return v[i-1][k_ema]*(w-dt)/w + v[i][k_p]*dt/w
+
+# APYs
+
+apys = (0.10, 0.30, 0.50, 0.70, 0.85)
+p_apy = {apy: None for apy in apys}
+p_apy[0.85] = 20000
+
+def apy_p(m,p):
+    t0 = m.time_d(m.peak_d - timedelta(1))
+    p0 = m.exp_exp_p(m.p_s(m.ln_t(t0),p))
+    return pow(p/p0, 365)-1
+
+m = basic_model()
+for p in range(1, m.peak_cycle_p):
+    apy = apy_p(m,p)
+    for y in apys:
+        if p_apy[y] is None and apy > y:
+            p_apy[y] = p
+
+# Model data
 
 def model_data(m):
     end_date = m.base_d + timedelta(3*(m.peak_d - m.base_d).days)
@@ -85,6 +109,14 @@ def model_data(m):
             r['dp_m'] = r['asin(ln(ln(p_m)))'] - r['asin(ln(ln(p_s)))']
             r['ln(dp_m)'] = m.ln_dp(r['dp_m'])
             r['ln(ln(dp_m))'] = m.ln_p(r['ln(dp_m)'])
+
+        # apy
+        for apy in apys:
+            k = 'p_apy_'+str(floor(100*apy))+'%'
+            if r['t'] < m.peak_t:
+                r[k] = m.exp_exp_p(m.p_s(r['ln(t)'], p=p_apy[apy]))
+            else:
+                r[k] = p_apy[apy] * pow(1+apy, r['t']-m.peak_t)
 
         # price delta percentage between supercycle support and resistance (dp%)
         if d in p_btc:

@@ -101,6 +101,7 @@ plot ["2020-06-01":"2025-06-01"] [5000:70000] \
 # p vs d [2010]
 
 set format x "%Y-%m-%d"
+set logscale y
 
 set output "plot/zoom/p vs d [2010].png"
 plot ["2010-10-01":"2011-01-01"] [0.01:2] \
@@ -109,7 +110,7 @@ plot ["2010-10-01":"2011-01-01"] [0.01:2] \
      basic_model using (column("d")):(column("p_r")) @black_line, \
      basic_model using (column("d")):(column("p_m")) @blue_line
 
-unset xdata; unset format; unset grid
+unset logscale y; unset xdata; unset format; unset grid
 
 # ln(p) vs t
 

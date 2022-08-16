@@ -18,7 +18,7 @@ Layers of scales are used to visualize and build the model. Using ln(price)+3 an
 
 The cycles become exponentially farther apart.
 
-![ln(p) vs t](plot/ln(p)%20vs%20t.png)
+![ln(p) vs t](plot/scale/1.%20ln%28p%29%20vs%20t.png)
 
 ## 2. ln(p) vs ln(t)
 

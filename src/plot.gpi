@@ -1,9 +1,11 @@
 #!/usr/local/bin/gnuplot
 
+w_png = 960; h_png = 480
+
 set datafile separator "," 
 set timefmt "%Y-%m-%d"
 set decimal locale
-set terminal png size 960,480
+set terminal png size w_png, h_png
 set key noautotitle
 set key spacing 1.75
 
@@ -43,6 +45,8 @@ plot ["2010-01-01":"2023-06-01"] [1500:25000] \
 
 # p vs d [basic]
 
+set grid
+
 set output "plot/future/p vs d [basic].png"
 plot ["2010-01-01":"2040-01-01"] [0.01:200000] \
      basic_model using (column("d")):(column("p")) @black_line, \
@@ -59,7 +63,7 @@ plot ["2010-01-01":"2034-01-01"] [0.01:200000] \
      mirror_model using (column("d")):(column("p_r")) @black_line, \
      mirror_model using (column("d")):(column("p_m")) @thick_blue_line
 
-# p vs d [apy]
+# p vs d [mirror apy]
 
 mid_d = '2021-06-01'
 set label 10 '10%' at mid_d, 0.50
@@ -68,38 +72,38 @@ set label 50 '50%' at mid_d, 200
 set label 75 '75%' at mid_d, 1750
 set label 85 '85%' at mid_d, 9000
 
-set output "plot/future/p vs d [apy].png"
+set output "plot/future/p vs d [mirror apy].png"
 plot ["2010-01-01":"2034-01-01"] [0.01:200000] \
      mirror_model using (column("d")):(column("p")) @black_line, \
-     mirror_model using (column("d")):(column("p_apy_10%")) @gray_line, \
-     mirror_model using (column("d")):(column("p_apy_30%")) @gray_line, \
-     mirror_model using (column("d")):(column("p_apy_50%")) @gray_line, \
-     mirror_model using (column("d")):(column("p_apy_70%")) @gray_line, \
-     mirror_model using (column("d")):(column("p_apy_85%")) @gray_line, \
+     mirror_model using (column("d")):(column("p_apy_10%")) @black_line, \
+     mirror_model using (column("d")):(column("p_apy_30%")) @black_line, \
+     mirror_model using (column("d")):(column("p_apy_50%")) @black_line, \
+     mirror_model using (column("d")):(column("p_apy_70%")) @black_line, \
+     mirror_model using (column("d")):(column("p_apy_85%")) @black_line, \
      mirror_model using (column("d")):(column("p_s")) @black_line, \
      mirror_model using (column("d")):(column("p_r")) @black_line, \
      mirror_model using (column("d")):(column("p_m")) @thick_blue_line
 
 unset label 10; unset label 30; unset label 50; unset label 75; unset label 85
 
+# p vs d [2020-2023]
+
+set grid
+unset logscale y
+
+set output "plot/zoom/p vs d [2020-2025].png"
+plot ["2020-06-01":"2025-06-01"] [5000:70000] \
+     mirror_model using (column("d")):(column("p")) @black_line, \
+     mirror_model using (column("d")):(column("p_s")) @black_line, \
+     mirror_model using (column("d")):(column("p_r")) @black_line, \
+     mirror_model using (column("d")):(column("p_m")) @blue_line
+
 # p vs d [2010]
 
 set format x "%Y-%m-%d"
-set grid
 
 set output "plot/zoom/p vs d [2010].png"
 plot ["2010-10-01":"2011-01-01"] [0.01:2] \
-     basic_model using (column("d")):(column("p")) @black_line, \
-     basic_model using (column("d")):(column("p_s")) @black_line, \
-     basic_model using (column("d")):(column("p_r")) @black_line, \
-     basic_model using (column("d")):(column("p_m")) @blue_line
-
-# p vs d [2020-2023]
-
-unset logscale y
-
-set output "plot/zoom/p vs d [2020-2023].png"
-plot ["2020-06-01":"2023-06-01"] [5000:70000] \
      basic_model using (column("d")):(column("p")) @black_line, \
      basic_model using (column("d")):(column("p_s")) @black_line, \
      basic_model using (column("d")):(column("p_r")) @black_line, \
@@ -163,11 +167,23 @@ plot [0:1.1] \
      basic_model using (column("asin(ln(t))")):(column("asin(ln(ln(p_r)))")) @black_line, \
      basic_model using (column("asin(ln(t))")):(column("asin(ln(ln(p_m)))")) @thick_blue_line
 
+# asin(ln(ln(p))) vs asin(ln(t)) [preview]
+
+set terminal png size 3*w_png/4, 3*h_png/4
+
+set output "plot/scale/5. asin(ln(ln(p))) vs asin(ln(t)) [preview].png"
+plot [0:1.1] \
+     basic_model using (column("asin(ln(t))")):(column("asin(ln(ln(p)))")) @black_line, \
+     basic_model using (column("asin(ln(t))")):(column("asin(ln(ln(p_s)))")) @black_line, \
+     basic_model using (column("asin(ln(t))")):(column("asin(ln(ln(p_r)))")) @black_line, \
+     basic_model using (column("asin(ln(t))")):(column("asin(ln(ln(p_m)))")) @thick_blue_line
+set terminal png size w_png, h_png
+
 # Δp vs asin(ln(t))
 
 set terminal png size 1280,480
 
-set output "plot/scale/6. dp vs asin(ln(t)).png"
+set output "plot/scale/6a. dp vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set xrange [0:1.1]
 set ylabel "Δp"
@@ -176,7 +192,7 @@ plot basic_model using (column("asin(ln(t))")):(column("dp")) @black_line, \
 
 # ln(Δp) vs asin(ln(t))
 
-set output "plot/scale/7. ln(dp) vs asin(ln(t)).png"
+set output "plot/scale/6b. ln(dp) vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "ln(Δp)"
 plot basic_model using (column("asin(ln(t))")):(column("ln(dp)")) @black_line, \
@@ -184,7 +200,7 @@ plot basic_model using (column("asin(ln(t))")):(column("ln(dp)")) @black_line, \
 
 # ln(ln(Δp)) vs asin(ln(t))
 
-set output "plot/scale/8. ln(ln(dp)) vs asin(ln(t)).png"
+set output "plot/scale/6c. ln(ln(dp)) vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "ln(ln(Δp))"
 plot basic_model using (column("asin(ln(t))")):(column("ln(ln(dp))")) @black_line, \

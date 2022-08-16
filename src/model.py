@@ -29,7 +29,7 @@ class model:
         a = m.ln_ln_p(p or m.peak_super_p) - b
         return a*(2/pi*asin(sin(pi*t/m.peak_ln_t - pi/2)) + 1)/2 + b
 
-    # supercycle resistance wave in (ln(t), asin(ln(ln(p)))) coordinates
+    # supercycle resistance wave in (ln(t), ln(ln(p))) coordinates
     def p_r(m,t):
         return m.asin_p(m.p_s(t)) + m.asin_ln_ln_p(m.peak_cycle_p) - m.asin_ln_ln_p(m.peak_super_p)
 

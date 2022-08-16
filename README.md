@@ -4,7 +4,7 @@
 
 All of the price cycles of BTC can be formally modeled with exponential waves of both price and time. Achieving a remarkably good fit of their size and timing back to the very beginning of trading.
 
-It is unprecedented how BTC started at zero, but was seen as having vast potential to be a global currency, and as a generational investment opportunity. Creating a singularity with a 'big bang' that lead to its value on exchanges increasing one million times in a decade. These extreme market conditions caused a regularity not usually seen in chaotic markets, showing raw speculation investor psychology, and a series of bubble cycles that have become expected and modeled.
+It is unprecedented how BTC started at zero, but was seen as having vast potential to be a global currency, and as a generational investment opportunity. Creating a singularity with a "Big Bang" that lead to its value on exchanges increasing one million times in a decade. These extreme market conditions caused a regularity not usually seen in chaotic markets, showing raw speculation investor psychology, and a series of bubble cycles that have become expected and modeled.
 
 There are two usually unidentified crunched cycles during Oct and Nov 2010. Hidden in data that is normally considered noise by other models. Here though, these early cycles are key to one continuous rapid expansion then cooling from a point. With all these cycles fitting a supercycle of both price and time. With a peak expansion in Nov 2021 then a contraction projected.
 
@@ -66,9 +66,9 @@ The model in its basic form would give a massive correction wave.
 
 ## Mirror Projection
 
-It seems more likely though that time would accelerate again. Mirroring the past. Plus there would be the support of a grand supercycle, like Elliott Waves
+It seems more likely though that time would accelerate again. Mirroring the past. Plus, there would be the support of a grand supercycle, like Elliott Waves. Otherwise, there would be a "Big Crunch" collapsing back to zero which is plotted for reference.
 
-Plotted here is a linear approximation from the peak of supports with different APYs. Assuming that the grand supercycle would be an exponential price and time wave like the supercycle. Giving an idea of how rapidly the price would still be growing even after a large correction, because average market returns of around 10% would be apocalyptic. Around 50% would be a large correction that seems like the median projection of this model. While 75% would be optimistic.
+Also plotted here are linear approximations from the peak of support lines with different APYs. Assuming that the grand supercycle would be an exponential price and time wave like the supercycle. Giving an idea of how rapidly the price would still be growing even after a large correction, because average market returns of around 10% would be apocalyptic. Around 50% would be a large correction that seems like the median projection of this model. While 75% would be optimistic.
 
 ![p vs d mirror apy](plot/future/p%20vs%20d%20%5Bmirror%20apy%5D.png)
 

@@ -88,8 +88,9 @@ unset label 10; unset label 30; unset label 50; unset label 75; unset label 85
 
 # p vs d [2020-2023]
 
-set grid
+set format x "%Y-%m"
 unset logscale y
+set grid
 
 set output "plot/zoom/p vs d [2020-2025].png"
 plot ["2020-06-01":"2025-06-01"] [5000:70000] \

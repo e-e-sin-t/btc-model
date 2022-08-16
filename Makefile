@@ -1,6 +1,6 @@
 all:
 	src/mkdata.py
-	@mkdir -p plot
+	@mkdir -p plot/scale plot/zoom plot/future plot/ixic
 	src/plot.gpi
 
 clean:

@@ -35,7 +35,7 @@ plot ["2010-06-01":"2023-01-01"] [0.01:200000] \
 
 # p_ixic vs d
 
-set output "plot/p_ixic vs d.png"
+set output "plot/ixic/p_ixic vs d.png"
 plot ["2010-01-01":"2023-06-01"] [1500:25000] \
      basic_model using (column("d")):(column("p_ixic")) @black_line, \
      basic_model using (column("d")):(column("p_ixic_s")) @black_line, \
@@ -43,7 +43,7 @@ plot ["2010-01-01":"2023-06-01"] [1500:25000] \
 
 # p vs d [basic]
 
-set output "plot/p vs d [basic].png"
+set output "plot/future/p vs d [basic].png"
 plot ["2010-01-01":"2040-01-01"] [0.01:200000] \
      basic_model using (column("d")):(column("p")) @black_line, \
      basic_model using (column("d")):(column("p_s")) @black_line, \
@@ -52,7 +52,7 @@ plot ["2010-01-01":"2040-01-01"] [0.01:200000] \
 
 # p vs d [mirror]
 
-set output "plot/p vs d [mirror].png"
+set output "plot/future/p vs d [mirror].png"
 plot ["2010-01-01":"2034-01-01"] [0.01:200000] \
      mirror_model using (column("d")):(column("p")) @black_line, \
      mirror_model using (column("d")):(column("p_s")) @black_line, \
@@ -68,7 +68,7 @@ set label 50 '50%' at mid_d, 200
 set label 75 '75%' at mid_d, 1750
 set label 85 '85%' at mid_d, 9000
 
-set output "plot/p vs d [apy].png"
+set output "plot/future/p vs d [apy].png"
 plot ["2010-01-01":"2034-01-01"] [0.01:200000] \
      mirror_model using (column("d")):(column("p")) @black_line, \
      mirror_model using (column("d")):(column("p_apy_10%")) @gray_line, \
@@ -87,7 +87,7 @@ unset label 10; unset label 30; unset label 50; unset label 75; unset label 85
 set format x "%Y-%m-%d"
 set grid
 
-set output "plot/p vs d [2010].png"
+set output "plot/zoom/p vs d [2010].png"
 plot ["2010-10-01":"2011-01-01"] [0.01:2] \
      basic_model using (column("d")):(column("p")) @black_line, \
      basic_model using (column("d")):(column("p_s")) @black_line, \
@@ -98,7 +98,7 @@ plot ["2010-10-01":"2011-01-01"] [0.01:2] \
 
 unset logscale y
 
-set output "plot/p vs d [2020-2023].png"
+set output "plot/zoom/p vs d [2020-2023].png"
 plot ["2020-06-01":"2023-06-01"] [5000:70000] \
      basic_model using (column("d")):(column("p")) @black_line, \
      basic_model using (column("d")):(column("p_s")) @black_line, \
@@ -109,7 +109,7 @@ unset xdata; unset format; unset grid
 
 # ln(p) vs t
 
-set output "plot/ln(p) vs t.png"
+set output "plot/scale/1. ln(p) vs t.png"
 set xlabel "t"
 set ylabel "ln(p)"
 plot [0:12] \
@@ -122,7 +122,7 @@ plot [0:12] \
 
 set xrange [0:8.5]
 
-set output "plot/ln(p) vs ln(t).png"
+set output "plot/scale/2. ln(p) vs ln(t).png"
 set xlabel "ln(t)"
 set ylabel "ln(p)"
 plot basic_model using (column("ln(t)")):(column("ln(p)")) @black_line, \
@@ -132,7 +132,7 @@ plot basic_model using (column("ln(t)")):(column("ln(p)")) @black_line, \
 
 # ln(ln(p)) vs ln(t)
 
-set output "plot/ln(ln(p)) vs ln(t).png"
+set output "plot/scale/3. ln(ln(p)) vs ln(t).png"
 set xlabel "ln(t)"
 set ylabel "ln(ln(p))"
 plot basic_model using (column("ln(t)")):(column("ln(ln(p))")) @black_line, \
@@ -142,7 +142,7 @@ plot basic_model using (column("ln(t)")):(column("ln(ln(p))")) @black_line, \
 
 # asin(ln(ln(p))) vs ln(t)
 
-set output "plot/asin(ln(ln(p))) vs ln(t).png"
+set output "plot/scale/4. asin(ln(ln(p))) vs ln(t).png"
 set xlabel "ln(t)"
 set ylabel "asin(ln(ln(p)))"
 plot basic_model using (column("ln(t)")):(column("asin(ln(ln(p)))")) @black_line, \
@@ -154,7 +154,7 @@ unset xrange
 
 # asin(ln(ln(p))) vs asin(ln(t))
 
-set output "plot/asin(ln(ln(p))) vs asin(ln(t)).png"
+set output "plot/scale/5. asin(ln(ln(p))) vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "asin(ln(ln(p)))"
 plot [0:1.1] \
@@ -167,7 +167,7 @@ plot [0:1.1] \
 
 set terminal png size 1280,480
 
-set output "plot/dp vs asin(ln(t)).png"
+set output "plot/scale/6. dp vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set xrange [0:1.1]
 set ylabel "Δp"
@@ -176,7 +176,7 @@ plot basic_model using (column("asin(ln(t))")):(column("dp")) @black_line, \
 
 # ln(Δp) vs asin(ln(t))
 
-set output "plot/ln(dp) vs asin(ln(t)).png"
+set output "plot/scale/7. ln(dp) vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "ln(Δp)"
 plot basic_model using (column("asin(ln(t))")):(column("ln(dp)")) @black_line, \
@@ -184,7 +184,7 @@ plot basic_model using (column("asin(ln(t))")):(column("ln(dp)")) @black_line, \
 
 # ln(ln(Δp)) vs asin(ln(t))
 
-set output "plot/ln(ln(dp)) vs asin(ln(t)).png"
+set output "plot/scale/8. ln(ln(dp)) vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "ln(ln(Δp))"
 plot basic_model using (column("asin(ln(t))")):(column("ln(ln(dp))")) @black_line, \
@@ -194,7 +194,7 @@ plot basic_model using (column("asin(ln(t))")):(column("ln(ln(dp))")) @black_lin
 
 set format y "%.0f%%"
 
-set output "plot/dp, dp_ixic vs asin(ln(t)).png"
+set output "plot/ixic/dp, dp_ixic vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "Δp"
 set yrange [-25:135]
@@ -207,7 +207,7 @@ unset yrange
 
 # Δp - Δp_ixic vs asin(ln(t))
 
-set output "plot/dp - dp_ixic vs asin(ln(t)).png"
+set output "plot/ixic/dp - dp_ixic vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "Δp"
 plot basic_model using (column("asin(ln(t))")):(100*(column("dp%")-column("dp_ixic%"))) @gray_line \
@@ -225,7 +225,7 @@ set fit logfile "/dev/null"
 f(x) = a*exp(-b*x)
 fit f(x) basic_model using (column('asin(ln(t))')):(abs(column("dp%")-column("dp_ixic%"))) via a, b
 
-set output "plot/abs(dp - dp_ixic) vs asin(ln(t)).png"
+set output "plot/ixic/abs(dp - dp_ixic) vs asin(ln(t)).png"
 set xlabel "asin(ln(t))"
 set ylabel "abs(Δp)"
 set yrange [-20:100] 

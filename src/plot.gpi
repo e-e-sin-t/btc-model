@@ -236,4 +236,4 @@ plot basic_model using (column("asin(ln(t))")):(100*abs(column("dp%")-column("dp
      100*f(x) @blue_line title sprintf("fit(a·e^{-b·t}), a=%0.3f, b=%0.3f", a, b), \
      0 @black_line
 
-unset xrange; unset yrange
+unset xrange; unset yrange; unset format y

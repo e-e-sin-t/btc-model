@@ -24,7 +24,7 @@ def write_csv(s,v):
     for r in v:
         l = []
         for k in v[0].keys():
-            if not r.get(k):
+            if r.get(k) is None:
                 l.append("")
             elif isinstance(r[k], float):
                 l.append("%.4f" % r[k])
@@ -52,7 +52,7 @@ def apy_p(m,p):
     p0 = m.exp_exp_p(m.p_s(m.ln_t(t0),p))
     return pow(p/p0, 365)-1
 
-m = basic_model()
+m = model()
 for p in range(1, m.peak_cycle_p):
     apy = apy_p(m,p)
     for y in apys:
@@ -150,3 +150,51 @@ def model_data(m):
 
 for m in models:
     write_csv("data/"+m.name+"-model.csv", model_data(m))
+
+# Cycle stats
+
+m = model()
+v = []
+for n in range(m.n_cycles):
+    r = {'n': n}
+    v.append(r)
+
+    # base time (t_b)
+    r['asin(ln(t_b))'] = n/(m.n_cycles-0.5)
+    r['ln(t_b)'] = m.sin_t(r['asin(ln(t_b))'])
+    r['t_b'] = m.e_t(r['ln(t_b)'])
+    r['d_b'] = m.date_t(r['t_b'])
+
+    # base price (p_b)
+    r['p_b'] = m.p(r['t_b'])
+    r['ln(p_b)'] = m.ln_p(r['p_b'])
+    r['ln(ln(p_b))'] = m.ln_p(r['ln(p_b)'])
+    r['asin(ln(ln(p_b)))'] = m.asin_p(r['ln(ln(p_b))'])
+
+    # peak time (t_p)
+    r['asin(ln(t_p))'] = (n+0.5)/(m.n_cycles-0.5)
+    r['ln(t_p)'] = m.sin_t(r['asin(ln(t_p))'])
+    r['t_p'] = m.e_t(r['ln(t_p)'])
+    r['d_p'] = m.date_t(r['t_p'])
+
+    # peak price (p_p)
+    r['p_p'] = m.p(r['t_p'])
+    r['ln(p_p)'] = m.ln_p(r['p_p'])
+    r['ln(ln(p_p))'] = m.ln_p(r['ln(p_p)'])
+    r['asin(ln(ln(p_p)))'] = m.asin_p(r['ln(ln(p_p))'])
+
+    if len(v) > 1:
+        q = v[-2]
+
+        # end time (t_e)
+        q['t_e'] = r['t_b']
+        q['ln(t_e)'] = r['ln(t_b)']
+        q['asin(ln(t_e))'] = r['asin(ln(t_b))']
+
+        # end price (p_e)
+        q['p_e'] = r['p_b']
+        q['ln(p_e)'] = r['ln(p_b)']
+        q['ln(ln(p_e))'] = r['ln(ln(p_b))']
+        q['asin(ln(ln(p_e)))'] = r['asin(ln(ln(p_b)))']
+
+write_csv("data/cycle.csv", v)

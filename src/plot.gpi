@@ -48,7 +48,7 @@ plot ["2010-01-01":"2023-06-01"] [1500:25000] \
 set grid
 
 set output "plot/future/p vs d [basic].png"
-plot ["2010-01-01":"2040-01-01"] [0.01:200000] \
+plot ["2010-01-01":"2045-01-01"] [0.01:200000] \
      basic_model using (column("d")):(column("p")) @black_line, \
      basic_model using (column("d")):(column("p_s")) @black_line, \
      basic_model using (column("d")):(column("p_r")) @black_line, \
@@ -86,18 +86,33 @@ plot ["2010-01-01":"2034-01-01"] [0.01:200000] \
 
 unset label 10; unset label 30; unset label 50; unset label 75; unset label 85
 
-# p vs d [2020-2023]
+# p vs d [basic 2020-2027]
 
-set format x "%Y-%m"
+set format x "%Y"
 unset logscale y
 set grid
 
-set output "plot/zoom/p vs d [2020-2025].png"
-plot ["2020-06-01":"2025-06-01"] [5000:70000] \
-     mirror_model using (column("d")):(column("p")) @black_line, \
+set xrange ["2020-01-01":"2027-01-01"]
+set yrange [0:70000]
+
+set output "plot/zoom/p vs d [basic 2020-2027].png"
+plot basic_model using (column("d")):(column("p")) @black_line, \
+     basic_model using (column("d")):(column("p_s")) @black_line, \
+     basic_model using (column("d")):(column("p_r")) @black_line, \
+     basic_model using (column("d")):(column("p_m")) @blue_line
+
+# p vs d [mirror 2020-2027]
+
+unset logscale y
+set grid
+
+set output "plot/zoom/p vs d [mirror 2020-2027].png"
+plot mirror_model using (column("d")):(column("p")) @black_line, \
      mirror_model using (column("d")):(column("p_s")) @black_line, \
      mirror_model using (column("d")):(column("p_r")) @black_line, \
      mirror_model using (column("d")):(column("p_m")) @blue_line
+
+unset xrange; unset yrange
 
 # p vs d [2010]
 

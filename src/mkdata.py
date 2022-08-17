@@ -62,7 +62,7 @@ for p in range(1, m.peak_cycle_p):
 # Model data
 
 def model_data(m):
-    end_date = m.base_d + timedelta(3*(m.peak_d - m.base_d).days)
+    end_date = m.base_d + timedelta(4*(m.peak_d - m.base_d).days)
     dates = (m.base_d + timedelta(n) for n in range((end_date - m.base_d).days))
 
     v = []
